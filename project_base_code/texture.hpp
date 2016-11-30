@@ -7,6 +7,7 @@
 
 // Qt includes.
 #include <QtOpenGL>
+#include<QDir>
 
 // The texture class.
 class Texture

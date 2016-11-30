@@ -26,14 +26,14 @@ class CCanvas : public QGLWidget
 
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
-        textureTrain("/Users/jansvoboda/Documents/USI Courses/Computer Graphics/15-16/project_base_code/train.jpg"),
-        modelTrain("/Users/jansvoboda/Documents/USI Courses/Computer Graphics/15-16/project_base_code/train.obj"),
-        modelTrain2("/Users/jansvoboda/Documents/USI Courses/Computer Graphics/15-16/project_base_code/train.ply")
+        textureTracks("textures/wood2.jpg"),
+        modelTracks("models/allTracks.obj")
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
         timer->start(10);
     }
+
 
 protected:
     void initializeGL();
@@ -65,11 +65,11 @@ private:
     void setView(View _view);
 
     // Models and textures
-    Texture textureTrain;
+    Texture textureTracks;
     // Model loaded from .obj format
-    ObjModel modelTrain;
+    ObjModel modelTracks;
     // Model loaded from .ply format
-    PlyModel modelTrain2;
+//    PlyModel modelTrain2;
 };
 
 #endif 
