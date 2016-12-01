@@ -26,8 +26,8 @@ class CCanvas : public QGLWidget
 
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
-        textureTracks("textures/wood2.jpg"),
-        modelTracks("models/allTracks.obj")
+        textureTracks("textures/wood.jpg"),
+        modelTracks("models/turn.obj")
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));

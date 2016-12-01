@@ -253,6 +253,7 @@ void CCanvas::paintGL()
 
     // Look at the ObjModel class to see how the drawing is done
 //    glScalef(100,100,100);
+    glScalef(0.2f, 0.2f, 0.2f);
     modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
     /*
