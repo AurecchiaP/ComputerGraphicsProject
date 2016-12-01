@@ -3,16 +3,16 @@
 
 #include "AbstractTrackPiece.h"
 
+#define STRAIGHT_PIECE_LENGTH 5.0
+
 class StraightTrackPiece : public AbstractTrackPiece
 {
 private:
-    static const GLdouble mat[16];
     static ObjModel model;
 public:
     StraightTrackPiece();
-    virtual const GLdouble * getTransformationMatrix();
+    virtual void applyTransforms();
     virtual void draw();
-
 };
 
 #endif // STRAIGHTTRACKPIECE_H

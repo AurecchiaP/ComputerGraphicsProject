@@ -10,7 +10,7 @@ class AbstractTrackPiece
 {
 public:
     AbstractTrackPiece();
-    virtual const GLdouble * getTransformationMatrix() = 0;
+    virtual void applyTransforms() = 0;
     virtual void draw() = 0;
 };
 
