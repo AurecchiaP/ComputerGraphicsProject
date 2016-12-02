@@ -24,7 +24,9 @@ HEADERS += ./Base.h \
            ./objloader.hpp \
            ./tinyply.h \
     AbstractTrackPiece.h \
-    StraightTrackPiece.h
+    Left60DegTurnPiece.h \
+    StraightPiece.h \
+    Right60DegTurnPiece.h
 
 # Source files
 SOURCES += ./CCanvas.cpp \
@@ -36,7 +38,9 @@ SOURCES += ./CCanvas.cpp \
            ./objloader.cpp \
            ./tinyply.cpp \
     AbstractTrackPiece.cpp \
-    StraightTrackPiece.cpp
+    Left60DegTurnPiece.cpp \
+    StraightPiece.cpp \
+    Right60DegTurnPiece.cpp
 
 # Forms
 FORMS += ./GLRender.ui
