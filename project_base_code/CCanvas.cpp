@@ -1,8 +1,28 @@
 #include "CCanvas.h"
 #include "Base.h"
 #include "Sphere.h"
+#include "TrackPieceType.h"
+#include "TrackPiece.h"
+
 
 using namespace std;
+
+//-----------------------------------------------------------------------------
+// Track types
+
+static TrackPieceType straight("models/straight_track.obj", []() {
+    glTranslated(-15.2821, 0.0, 0.0);
+});
+
+static TrackPieceType left60("models/curved60.obj", []() {
+   glTranslated(-9.11696, -5.13948, 0.0);
+   glRotated(60, 0, 0, 1);
+});
+
+static TrackPieceType right60("models/curved-60.obj", []() {
+   glTranslated(-12.5744, 7.13154, 0);
+   glRotated(-60, 0, 0, 1);
+});
 
 //-----------------------------------------------------------------------------
 
@@ -45,6 +65,11 @@ void CCanvas::initializeGL()
      */
     textureTracks.setTexture();
     modelTracks.init();
+
+    // Initialize models for all types
+    straight.init();
+    left60.init();
+    right60.init();
 }
 
 //-----------------------------------------------------------------------------
@@ -175,8 +200,8 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslatef(0.0, -2.5, -10.0);
-        glRotatef(0.0f, 0.0f, 1.0f, 0.0f);
+        glTranslated(5.0, -0.5, -15.0);
+        glRotated(-60, 1.0, 0.0, 0.0);
         break;
     case Cockpit:
         // Maybe you want to have an option to view the scene from the train cockpit, up to you
@@ -203,7 +228,7 @@ void CCanvas::paintGL()
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
     /**** Axes in the global coordinate system ****/
-    /*
+
     glDisable(GL_LIGHTING);
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_LINES);
@@ -221,7 +246,7 @@ void CCanvas::paintGL()
         glVertex3f(0.0f, 0.0f, 6.0f);
     glEnd();
     glEnable(GL_LIGHTING);
-    */
+
     /**** Setup and draw your objects ****/
 
     // You can freely enable/disable some of the lights in the scene as you wish
@@ -254,7 +279,19 @@ void CCanvas::paintGL()
     // Look at the ObjModel class to see how the drawing is done
 //    glScalef(100,100,100);
     glScalef(0.2f, 0.2f, 0.2f);
-    modelTracks.draw();
+    TrackPiece piece1(straight);
+    TrackPiece piece2(left60);
+    TrackPiece piece3(right60);
+    piece1.draw();
+    piece1.applyTransforms();
+    piece2.draw();
+    piece2.applyTransforms();
+    piece1.draw();
+    piece1.applyTransforms();
+    piece3.draw();
+    piece3.applyTransforms();
+    piece1.draw();
+//    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
     /*
      * The models you load can have different scales. If you are drawing a proper model but nothing

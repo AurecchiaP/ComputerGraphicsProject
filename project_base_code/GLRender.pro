@@ -23,10 +23,8 @@ HEADERS += ./Base.h \
            ./PlyModel.h \
            ./objloader.hpp \
            ./tinyply.h \
-    AbstractTrackPiece.h \
-    Left60DegTurnPiece.h \
-    StraightPiece.h \
-    Right60DegTurnPiece.h
+    TrackPiece.h \
+    TrackPieceType.h
 
 # Source files
 SOURCES += ./CCanvas.cpp \
@@ -37,10 +35,8 @@ SOURCES += ./CCanvas.cpp \
            ./PlyModel.cpp \
            ./objloader.cpp \
            ./tinyply.cpp \
-    AbstractTrackPiece.cpp \
-    Left60DegTurnPiece.cpp \
-    StraightPiece.cpp \
-    Right60DegTurnPiece.cpp
+    TrackPiece.cpp \
+    TrackPieceType.cpp
 
 # Forms
 FORMS += ./GLRender.ui
