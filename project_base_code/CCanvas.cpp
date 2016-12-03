@@ -14,6 +14,18 @@ static TrackPieceType straight("models/straight_track.obj", []() {
     glTranslated(-15.2821, 0.0, 0.0);
 });
 
+static TrackPieceType straightShort("models/straight_track_short.obj", []() {
+    glTranslated(-10.8618, 0.0, 0.0);
+});
+
+static TrackPieceType straightLong("models/straight_track_long.obj", []() {
+    glTranslated(-21.6652, 0.0, 0.0);
+});
+
+static TrackPieceType straightY("models/straight_track_y.obj", []() {
+    glTranslated(-12.2576, 0.0, 0.0);
+});
+
 static TrackPieceType left60("models/curved60.obj", []() {
    glTranslated(-9.11696, -5.13948, 0.0);
    glRotated(60, 0, 0, 1);
@@ -70,6 +82,9 @@ void CCanvas::initializeGL()
     straight.init();
     left60.init();
     right60.init();
+    straightShort.init();
+    straightLong.init();
+    straightY.init();
 }
 
 //-----------------------------------------------------------------------------
@@ -279,18 +294,69 @@ void CCanvas::paintGL()
     // Look at the ObjModel class to see how the drawing is done
 //    glScalef(100,100,100);
     glScalef(0.2f, 0.2f, 0.2f);
+    /*
     TrackPiece piece1(straight);
-    TrackPiece piece2(left60);
-    TrackPiece piece3(right60);
-    piece1.draw();
-    piece1.applyTransforms();
-    piece2.draw();
-    piece2.applyTransforms();
-    piece1.draw();
-    piece1.applyTransforms();
-    piece3.draw();
-    piece3.applyTransforms();
-    piece1.draw();
+    TrackPiece piece3(straightLong);
+    TrackPiece piece4(straightY);
+    */
+    TrackPiece straightPiece(straightShort);
+    TrackPiece leftPiece(left60);
+    TrackPiece rightPiece(right60);
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    leftPiece.draw(); leftPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    leftPiece.draw(); leftPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    leftPiece.draw(); leftPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    leftPiece.draw(); leftPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
+    rightPiece.draw(); rightPiece.applyTransforms();
+
+    straightPiece.draw(); straightPiece.applyTransforms();
+
 //    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
     /*
