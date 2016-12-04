@@ -1,8 +1,40 @@
 #include "CCanvas.h"
 #include "Base.h"
 #include "Sphere.h"
+#include "TrackPieceType.h"
+#include "TrackPiece.h"
+
 
 using namespace std;
+
+//-----------------------------------------------------------------------------
+// Track types
+
+static TrackPieceType straight("models/straight_track.obj", []() {
+    glTranslated(-15.2821, 0.0, 0.0);
+});
+
+static TrackPieceType straightShort("models/straight_track_short.obj", []() {
+    glTranslated(-10.8618, 0.0, 0.0);
+});
+
+static TrackPieceType straightLong("models/straight_track_long.obj", []() {
+    glTranslated(-21.6652, 0.0, 0.0);
+});
+
+static TrackPieceType straightY("models/straight_track_y.obj", []() {
+    glTranslated(-12.2576, 0.0, 0.0);
+});
+
+static TrackPieceType left60("models/curved60.obj", []() {
+   glTranslated(-9.11696, -5.13948, 0.0);
+   glRotated(60, 0, 0, 1);
+});
+
+static TrackPieceType right60("models/curved-60.obj", []() {
+   glTranslated(-12.5744, 7.13154, 0);
+   glRotated(-60, 0, 0, 1);
+});
 
 //-----------------------------------------------------------------------------
 
@@ -14,6 +46,7 @@ void CCanvas::initializeGL()
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // really nice perspective calculations
     glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
 
     // One light source
     glEnable(GL_LIGHTING);
@@ -28,12 +61,13 @@ void CCanvas::initializeGL()
      * light in eye coordinates, and attenuation is enabled. The default position is (0,0,1,0); thus,
      * the default light source is directional, parallel to, and in the direction of the -z axis.
      */
-    GLfloat lightpos[] = {0.0, 0.0, 1.0, 0.0};
+    GLfloat lightpos[] = {0.0, 0.0, 10.0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
-    GLfloat lightAmb[]  = {0.3, 0.3, 0.3};
-    GLfloat lightDiff[] = {0.4, 0.4, 0.4};
-    GLfloat lightSpec[] = {0.5, 0.5, 0.5};
+
+    GLfloat lightAmb[]  = {0.3, 0.3, 0.3, 1.0};
+    GLfloat lightDiff[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat lightSpec[] = {0.5, 0.5, 0.5, 1.0};
 
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
     glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmb);
@@ -43,9 +77,44 @@ void CCanvas::initializeGL()
      * Before you can use the texture you need to initialize it by calling the setTexture() method.
      * Before you can use OBJ/PLY model, you need to initialize it by calling init() method.
      */
-    textureTrain.setTexture();
-    modelTrain.init();
-    modelTrain2.init();
+    textureTracks.setTexture();
+
+    // Initialize models for all types
+    straight.init();
+    left60.init();
+    right60.init();
+    straightShort.init();
+    straightLong.init();
+    straightY.init();
+
+    // Create the track
+    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(left60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
 }
 
 //-----------------------------------------------------------------------------
@@ -176,8 +245,8 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslatef(1.0, -2.5, -10.0);
-        glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
+        glTranslated(5.0, -0.5, -15.0);
+        glRotated(-30, 1.0, 0.0, 0.0);
         break;
     case Cockpit:
         // Maybe you want to have an option to view the scene from the train cockpit, up to you
@@ -200,11 +269,11 @@ void CCanvas::paintGL()
     setView(View::Perspective);
 
     // You can always change the light position here if you want
-    GLfloat lightpos[] = {0.0f, 0.0f, 10.0f, 0.0f};
+    GLfloat lightpos[] = {0.0f, 0.0f, 15.0f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
     /**** Axes in the global coordinate system ****/
-    /*
+
     glDisable(GL_LIGHTING);
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_LINES);
@@ -222,7 +291,7 @@ void CCanvas::paintGL()
         glVertex3f(0.0f, 0.0f, 6.0f);
     glEnd();
     glEnable(GL_LIGHTING);
-    */
+
     /**** Setup and draw your objects ****/
 
     // You can freely enable/disable some of the lights in the scene as you wish
@@ -242,7 +311,7 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
-    textureTrain.bind();
+    textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
     glPushMatrix();
@@ -253,16 +322,29 @@ void CCanvas::paintGL()
     */
 
     // Look at the ObjModel class to see how the drawing is done
-    //modelTrain.draw();
+//    glScalef(100,100,100);
+    glScalef(0.2f, 0.2f, 0.2f);
+    /*
+    TrackPiece piece1(straight);
+    TrackPiece piece3(straightLong);
+    TrackPiece piece4(straightY);
+    */
+
+    for (TrackPiece & piece : track) {
+        piece.draw();
+        piece.applyTransforms();
+    }
+
+//    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
     /*
      * The models you load can have different scales. If you are drawing a proper model but nothing
      * is shown, check the scale of the model, your camera could be for example inside of it.
      */
     //glScalef(0.02f, 0.02f, 0.02f);
-    modelTrain2.draw();
+//    modelTrain2.draw();
     // Remove the last transformation matrix from the stack - you have drawn your last
     // object with a new transformation and now you go back to the previous one
     glPopMatrix();
-    textureTrain.unbind();
+    textureTracks.unbind();
 }
