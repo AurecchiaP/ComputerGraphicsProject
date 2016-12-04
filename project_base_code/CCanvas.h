@@ -15,6 +15,8 @@
 #include "ObjModel.h"
 #include "PlyModel.h"
 
+#include "TrackPiece.h"
+
 using namespace std;
 
 /************************************************************************/
@@ -27,7 +29,7 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        modelTracks("models/turn.obj")
+        track()
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -67,9 +69,11 @@ private:
     // Models and textures
     Texture textureTracks;
     // Model loaded from .obj format
-    ObjModel modelTracks;
+//    ObjModel modelTracks;
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
+
+    std::vector<TrackPiece> track;
 };
 
 #endif 

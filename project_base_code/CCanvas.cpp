@@ -46,6 +46,7 @@ void CCanvas::initializeGL()
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); // really nice perspective calculations
     glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
 
     // One light source
     glEnable(GL_LIGHTING);
@@ -60,12 +61,13 @@ void CCanvas::initializeGL()
      * light in eye coordinates, and attenuation is enabled. The default position is (0,0,1,0); thus,
      * the default light source is directional, parallel to, and in the direction of the -z axis.
      */
-    GLfloat lightpos[] = {0.0, 0.0, 1.0, 0.0};
+    GLfloat lightpos[] = {0.0, 0.0, 10.0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
-    GLfloat lightAmb[]  = {0.3, 0.3, 0.3};
-    GLfloat lightDiff[] = {0.4, 0.4, 0.4};
-    GLfloat lightSpec[] = {0.5, 0.5, 0.5};
+
+    GLfloat lightAmb[]  = {0.3, 0.3, 0.3, 1.0};
+    GLfloat lightDiff[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat lightSpec[] = {0.5, 0.5, 0.5, 1.0};
 
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
     glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmb);
@@ -76,7 +78,6 @@ void CCanvas::initializeGL()
      * Before you can use OBJ/PLY model, you need to initialize it by calling init() method.
      */
     textureTracks.setTexture();
-    modelTracks.init();
 
     // Initialize models for all types
     straight.init();
@@ -85,6 +86,35 @@ void CCanvas::initializeGL()
     straightShort.init();
     straightLong.init();
     straightY.init();
+
+    // Create the track
+    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(left60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
 }
 
 //-----------------------------------------------------------------------------
@@ -216,7 +246,7 @@ void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
         glTranslated(5.0, -0.5, -15.0);
-        glRotated(-60, 1.0, 0.0, 0.0);
+        glRotated(-30, 1.0, 0.0, 0.0);
         break;
     case Cockpit:
         // Maybe you want to have an option to view the scene from the train cockpit, up to you
@@ -239,7 +269,7 @@ void CCanvas::paintGL()
     setView(View::Perspective);
 
     // You can always change the light position here if you want
-    GLfloat lightpos[] = {0.0f, 0.0f, 10.0f, 0.0f};
+    GLfloat lightpos[] = {0.0f, 0.0f, 15.0f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
     /**** Axes in the global coordinate system ****/
@@ -299,63 +329,11 @@ void CCanvas::paintGL()
     TrackPiece piece3(straightLong);
     TrackPiece piece4(straightY);
     */
-    TrackPiece straightPiece(straightShort);
-    TrackPiece leftPiece(left60);
-    TrackPiece rightPiece(right60);
 
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    leftPiece.draw(); leftPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    leftPiece.draw(); leftPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    leftPiece.draw(); leftPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    leftPiece.draw(); leftPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
-
-    rightPiece.draw(); rightPiece.applyTransforms();
-
-    straightPiece.draw(); straightPiece.applyTransforms();
+    for (TrackPiece & piece : track) {
+        piece.draw();
+        piece.applyTransforms();
+    }
 
 //    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
