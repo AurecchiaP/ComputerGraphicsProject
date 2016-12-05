@@ -269,8 +269,15 @@ void CCanvas::paintGL()
     setView(View::Perspective);
 
     // You can always change the light position here if you want
-    GLfloat lightpos[] = {0.0f, 0.0f, 15.0f, 1.0f};
+    GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+
+//    glBegin(GL_TRIANGLES);
+//        glColor3f(1.0, 1.0, 0.0);
+//        glVertex4fv(lightpos);
+//        glVertex4f(lightpos[0], lightpos[1] + 1, lightpos[2], lightpos[3]);
+//        glVertex4f(lightpos[0], lightpos[1], lightpos[2] + 1, lightpos[3]);
+//    glEnd();
 
     /**** Axes in the global coordinate system ****/
 
