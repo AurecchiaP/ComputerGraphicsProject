@@ -344,10 +344,33 @@ void CCanvas::paintGL()
         piece.draw();
         piece.applyTransforms();
     }
-
-    glScalef(1.2f, 1.2f, 1.2f);
     textureFloor.bind();
+    glTranslatef(-85.0,0,0);
     floor.draw();
+    glTranslatef(0,45,0);
+    floor.draw();
+    textureFloor.unbind();
+    for(int i = 0 ; i < 4; ++i){
+        textureFloor.bind();
+
+        glTranslatef(45.0,0,0);
+        floor.draw();
+        if(i%2==0){
+            glTranslatef(0,-45,0);
+            floor.draw();
+        }else{
+            glTranslatef(0,45,0);
+            floor.draw();
+        }
+        textureFloor.unbind();
+    }
+
+
+
+//    glScalef(1.2f, 1.2f, 1.2f);
+//    textureFloor.bind();
+//    floor.draw();
+//    glTranslatef(10.0,10.0,10.0);
 
 
 //    modelTracks.draw();
@@ -362,4 +385,6 @@ void CCanvas::paintGL()
     // object with a new transformation and now you go back to the previous one
     glPopMatrix();
     textureTracks.unbind();
+//    textureFloor.unbind();
+
 }
