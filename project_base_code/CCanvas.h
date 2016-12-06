@@ -29,7 +29,7 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        textureFloor("textures/carpet.jpg"),
+        textureFloor("textures/carpet2.jpg"),
         floor("models/floor.obj"),
         track()
     {
