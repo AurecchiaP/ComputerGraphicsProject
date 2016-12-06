@@ -40,7 +40,7 @@ static TrackPieceType right60("models/curved-60.obj", []() {
 
 void CCanvas::initializeGL()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.5f);			   // black background
+    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
@@ -78,6 +78,7 @@ void CCanvas::initializeGL()
      * Before you can use OBJ/PLY model, you need to initialize it by calling init() method.
      */
     textureTracks.setTexture();
+    textureFloor.setTexture();
 
     // Initialize models for all types
     straight.init();
@@ -86,6 +87,8 @@ void CCanvas::initializeGL()
     straightShort.init();
     straightLong.init();
     straightY.init();
+
+    floor.init();
 
     // Create the track
     track.emplace_back(straightShort);
@@ -341,6 +344,11 @@ void CCanvas::paintGL()
         piece.draw();
         piece.applyTransforms();
     }
+
+    glScalef(0.2f, 0.2f, 0.2f);
+    textureFloor.bind();
+    floor.draw();
+
 
 //    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
