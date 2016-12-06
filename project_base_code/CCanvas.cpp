@@ -345,7 +345,7 @@ void CCanvas::paintGL()
         piece.applyTransforms();
     }
 
-    glScalef(0.2f, 0.2f, 0.2f);
+    glScalef(1.2f, 1.2f, 1.2f);
     textureFloor.bind();
     floor.draw();
 
