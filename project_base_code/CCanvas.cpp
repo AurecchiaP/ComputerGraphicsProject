@@ -382,9 +382,10 @@ void CCanvas::paintGL()
     double diff = modf(tau, &trash);
     track[i % track.size()]->applyTransforms(diff);
 
-    glTranslated(0, 3.99761/2.0, 1.23005);
+    glTranslated(0, 3.99761/2.0, 0.922535);
     glRotated(-90, 0, 0, 1);
     glRotated(90, 1, 0, 0);
+    glScaled(1.1, 1.1, 1.1);
     train.draw();
 
     tau += 0.01;
