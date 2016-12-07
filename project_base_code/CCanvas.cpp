@@ -10,8 +10,6 @@ using namespace std;
 //-----------------------------------------------------------------------------
 // Track types
 
-
-
 static TrackPieceType straight("models/straight_track_short.obj",
                                     []() {
     glTranslated(-10.8618, 0.0, 0.0);
@@ -96,6 +94,9 @@ void CCanvas::initializeGL()
     straight.init();
     left60.init();
     right60.init();
+    //Initialize train model
+    train.init();
+
 
     // Create the track
     track.emplace_back(straight);
@@ -365,9 +366,10 @@ void CCanvas::paintGL()
     double diff = modf(tau, &trash);
     track[i % track.size()].applyPartialTransforms(diff);
 
-    Sphere sphere(20, 20);
     glTranslated(0, 3.99761/2.0, 1.23005);
-    sphere.draw();
+    glRotated(-90, 0, 0, 1);
+    glRotated(90, 1, 0, 0);
+    train.draw();
 
     tau += 0.01;
 

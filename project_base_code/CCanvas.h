@@ -29,7 +29,8 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        track()
+        track(),
+        train("models/train.obj")
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -74,6 +75,7 @@ private:
 //    PlyModel modelTrain2;
 
     std::vector<TrackPiece> track;
+    ObjModel train;
 };
 
 #endif 
