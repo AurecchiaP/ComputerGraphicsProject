@@ -2,7 +2,6 @@
 #include "Base.h"
 #include "Sphere.h"
 #include "TrackPieceType.h"
-#include "TrackPiece.h"
 
 
 using namespace std;
@@ -91,56 +90,56 @@ void CCanvas::initializeGL()
 
 
     // Create the track
-    track.emplace_back(straight);
-    track.emplace_back(left60);
-    track.emplace_back(straight);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(left60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(left60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(left60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(right60);
-    track.emplace_back(straight);
+    track.push_back(&straight);
+    track.push_back(&left60);
+    track.push_back(&straight);
+    track.push_back(&right60);
+    track.push_back(&right60);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&left60);
+    track.push_back(&right60);
+    track.push_back(&right60);
+    track.push_back(&right60);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&left60);
+    track.push_back(&right60);
+    track.push_back(&right60);
+    track.push_back(&left60);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&right60);
+    track.push_back(&right60);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&right60);
+    track.push_back(&straight);
 
 
-//        track.emplace_back(right60);
-//        track.emplace_back(right60);
-//        track.emplace_back(straight);
-//        track.emplace_back(straight);
-//        track.emplace_back(left60);
-//        track.emplace_back(right60);
-//        track.emplace_back(straight);
-//        track.emplace_back(right60);
+//        track.push_back(&right60);
+//        track.push_back(&right60);
+//        track.push_back(&straight);
+//        track.push_back(&straight);
+//        track.push_back(&left60);
+//        track.push_back(&right60);
+//        track.push_back(&straight);
+//        track.push_back(&right60);
 
-//        track.emplace_back(right60);
-//        track.emplace_back(right60);
+//        track.push_back(&right60);
+//        track.push_back(&right60);
 
-//        track.emplace_back(straight);
-//        track.emplace_back(left60);
-//        track.emplace_back(straight);
+//        track.push_back(&straight);
+//        track.push_back(&left60);
+//        track.push_back(&straight);
 
-//        track.emplace_back(right60);
-//        track.emplace_back(straight);
+//        track.push_back(&right60);
+//        track.push_back(&straight);
 
-//        track.emplace_back(right60);
-//        track.emplace_back(straight);
+//        track.push_back(&right60);
+//        track.push_back(&straight);
 
 
 }
@@ -366,9 +365,9 @@ void CCanvas::paintGL()
     */
 
     glPushMatrix();
-    for (TrackPiece & piece : track) {
-        piece.draw();
-        piece.applyTransforms();
+    for (TrackPieceType * piece : track) {
+        piece->draw();
+        piece->applyTransforms();
     }
     glPopMatrix();
 
@@ -376,12 +375,12 @@ void CCanvas::paintGL()
 
     int i;
     for (i = 0; i < tau; ++i) {
-        track[i % track.size()].applyTransforms();
+        track[i % track.size()]->applyTransforms();
     }
 
     double trash;
     double diff = modf(tau, &trash);
-    track[i % track.size()].applyTransforms(diff);
+    track[i % track.size()]->applyTransforms(diff);
 
     glTranslated(0, 3.99761/2.0, 1.23005);
     glRotated(-90, 0, 0, 1);

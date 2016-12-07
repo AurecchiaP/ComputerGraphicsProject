@@ -15,7 +15,7 @@
 #include "ObjModel.h"
 #include "PlyModel.h"
 
-#include "TrackPiece.h"
+#include "TrackPieceType.h"
 
 using namespace std;
 
@@ -74,7 +74,7 @@ private:
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
 
-    std::vector<TrackPiece> track;
+    std::vector<TrackPieceType *> track;
     ObjModel train;
 };
 
