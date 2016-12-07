@@ -8,13 +8,33 @@
 using namespace std;
 
 //-----------------------------------------------------------------------------
-// Track types, transfomration matrices set in initializeGL
+// Track types
 
-static TrackPieceType straight("models/straight_track_short.obj");
+static TrackPieceType straight("models/straight_track.obj", []() {
+    glTranslated(-15.2821, 0.0, 0.0);
+});
 
-static TrackPieceType left60("models/curved60.obj");
+static TrackPieceType straightShort("models/straight_track_short.obj", []() {
+    glTranslated(-10.8618, 0.0, 0.0);
+});
 
-static TrackPieceType right60("models/curved-60.obj");
+static TrackPieceType straightLong("models/straight_track_long.obj", []() {
+    glTranslated(-21.6652, 0.0, 0.0);
+});
+
+static TrackPieceType straightY("models/straight_track_y.obj", []() {
+    glTranslated(-12.2576, 0.0, 0.0);
+});
+
+static TrackPieceType left60("models/curved60.obj", []() {
+   glTranslated(-9.11696, -5.13948, 0.0);
+   glRotated(60, 0, 0, 1);
+});
+
+static TrackPieceType right60("models/curved-60.obj", []() {
+   glTranslated(-12.5744, 7.13154, 0);
+   glRotated(-60, 0, 0, 1);
+});
 
 //-----------------------------------------------------------------------------
 
@@ -59,60 +79,42 @@ void CCanvas::initializeGL()
      */
     textureTracks.setTexture();
 
-
-    glMatrixMode(GL_MODELVIEW);
-    // Set transformation matrices
-    glPushMatrix();
-    glTranslated(-10.8618, 0.0, 0.0);
-    glGetDoublev(GL_MODELVIEW, straight.getMatrix());
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(-9.11696, -5.13948, 0.0);
-    glRotated(60, 0, 0, 1);
-    glGetDoublev(GL_MODELVIEW, left60.getMatrix());
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslated(-12.5744, 7.13154, 0);
-    glRotated(-60, 0, 0, 1);
-    glGetDoublev(GL_MODELVIEW, right60.getMatrix());
-    glPopMatrix();
-
-
     // Initialize models for all types
     straight.init();
     left60.init();
     right60.init();
+    straightShort.init();
+    straightLong.init();
+    straightY.init();
 
     // Create the track
-    track.emplace_back(straight);
+    track.emplace_back(straightShort);
     track.emplace_back(left60);
-    track.emplace_back(straight);
+    track.emplace_back(straightShort);
     track.emplace_back(right60);
     track.emplace_back(right60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(left60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
     track.emplace_back(left60);
     track.emplace_back(right60);
     track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
     track.emplace_back(left60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
     track.emplace_back(right60);
     track.emplace_back(right60);
-    track.emplace_back(straight);
-    track.emplace_back(straight);
+    track.emplace_back(left60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
     track.emplace_back(right60);
-    track.emplace_back(straight);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
+    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(straightShort);
 }
 
 //-----------------------------------------------------------------------------

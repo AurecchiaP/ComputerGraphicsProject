@@ -9,15 +9,12 @@ class TrackPieceType
 {
 private:
     ObjModel model;
-    GLdouble mat[16];
+    const std::function<void()> transform;
 public:
-    TrackPieceType(const std::string & filename, GLdouble * src_mat);
-    TrackPieceType(const std::string & filename);
+    TrackPieceType(const std::string & filename, std::function<void()> transform);
     void draw();
     void applyTransforms();
     void init();
-    void copyMatrix(GLdouble * src_mat);
-    GLdouble * getMatrix();
 };
 
 #endif // TRACKPIECETYPE_H
