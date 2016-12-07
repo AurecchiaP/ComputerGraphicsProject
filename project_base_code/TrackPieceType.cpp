@@ -1,7 +1,7 @@
 #include "TrackPieceType.h"
 
 TrackPieceType::TrackPieceType
-(const std::string & filename, std::function<void()> transform) :
+(const std::string & filename, std::function<void(double)> transform) :
     model(filename), transform(transform) {}
 
 void TrackPieceType::draw() {
@@ -9,7 +9,11 @@ void TrackPieceType::draw() {
 }
 
 void TrackPieceType::applyTransforms() {
-    transform();
+    transform(1.0);
+}
+
+void TrackPieceType::applyTransforms(double tau) {
+    transform(tau);
 }
 
 void TrackPieceType::init() {
