@@ -10,31 +10,44 @@ using namespace std;
 //-----------------------------------------------------------------------------
 // Track types
 
-static TrackPieceType straight("models/straight_track.obj", []() {
-    glTranslated(-15.2821, 0.0, 0.0);
-});
 
-static TrackPieceType straightShort("models/straight_track_short.obj", []() {
+
+static TrackPieceType straight("models/straight_track_short.obj",
+                                    []() {
     glTranslated(-10.8618, 0.0, 0.0);
+},
+[](double diff) {
+    glTranslated(-10.8618 * diff, 0.0, 0.0);
 });
 
-static TrackPieceType straightLong("models/straight_track_long.obj", []() {
-    glTranslated(-21.6652, 0.0, 0.0);
+static TrackPieceType left60("models/curved60.obj",
+                             []() {
+    glTranslated(-9.11696, -5.13948, 0.0);
+    glRotated(60, 0, 0, 1);
+},
+[](double diff) {
+    double x = diff * -9.11696;
+    double y = -0.00106363 * (x*x*x*x) - 0.0145636 * (x*x*x) - 0.122086 * (x*x) - 0.144834 * x;
+    glTranslated(x, y, 0.0);
+    glRotated(60 * diff, 0, 0, 1);
 });
 
-static TrackPieceType straightY("models/straight_track_y.obj", []() {
-    glTranslated(-12.2576, 0.0, 0.0);
+static TrackPieceType right60("models/curved-60.obj",
+                             []() {
+    glTranslated(-12.5744, 7.13154, 0);
+    glRotated(-60, 0, 0, 1);
+},
+[](double diff) {
+    double x = diff * -12.5744;
+    double y = - 0.0000368565 * (x*x*x*x*x) - 0.000899351 * (x*x*x*x) - 0.0089823 * (x*x*x) - 0.00164132 * (x*x) - 0.0342093 * x;
+    glTranslated(x, y, 0.0);
+    glRotated(-60 * diff, 0, 0, 1);
 });
 
-static TrackPieceType left60("models/curved60.obj", []() {
-   glTranslated(-9.11696, -5.13948, 0.0);
-   glRotated(60, 0, 0, 1);
-});
+//-------- Magic parameter tau
 
-static TrackPieceType right60("models/curved-60.obj", []() {
-   glTranslated(-12.5744, 7.13154, 0);
-   glRotated(-60, 0, 0, 1);
-});
+static double tau = 0.0;
+
 
 //-----------------------------------------------------------------------------
 
@@ -83,38 +96,35 @@ void CCanvas::initializeGL()
     straight.init();
     left60.init();
     right60.init();
-    straightShort.init();
-    straightLong.init();
-    straightY.init();
 
     // Create the track
-    track.emplace_back(straightShort);
+    track.emplace_back(straight);
     track.emplace_back(left60);
-    track.emplace_back(straightShort);
+    track.emplace_back(straight);
     track.emplace_back(right60);
     track.emplace_back(right60);
-    track.emplace_back(straightShort);
-    track.emplace_back(straightShort);
-    track.emplace_back(straightShort);
-    track.emplace_back(left60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(right60);
-    track.emplace_back(straightShort);
-    track.emplace_back(straightShort);
+    track.emplace_back(straight);
+    track.emplace_back(straight);
+    track.emplace_back(straight);
     track.emplace_back(left60);
     track.emplace_back(right60);
     track.emplace_back(right60);
+    track.emplace_back(right60);
+    track.emplace_back(straight);
+    track.emplace_back(straight);
     track.emplace_back(left60);
-    track.emplace_back(straightShort);
-    track.emplace_back(straightShort);
-    track.emplace_back(straightShort);
     track.emplace_back(right60);
     track.emplace_back(right60);
-    track.emplace_back(straightShort);
-    track.emplace_back(straightShort);
+    track.emplace_back(left60);
+    track.emplace_back(straight);
+    track.emplace_back(straight);
+    track.emplace_back(straight);
     track.emplace_back(right60);
-    track.emplace_back(straightShort);
+    track.emplace_back(right60);
+    track.emplace_back(straight);
+    track.emplace_back(straight);
+    track.emplace_back(right60);
+    track.emplace_back(straight);
 }
 
 //-----------------------------------------------------------------------------
@@ -272,30 +282,30 @@ void CCanvas::paintGL()
     GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
-//    glBegin(GL_TRIANGLES);
-//        glColor3f(1.0, 1.0, 0.0);
-//        glVertex4fv(lightpos);
-//        glVertex4f(lightpos[0], lightpos[1] + 1, lightpos[2], lightpos[3]);
-//        glVertex4f(lightpos[0], lightpos[1], lightpos[2] + 1, lightpos[3]);
-//    glEnd();
+    //    glBegin(GL_TRIANGLES);
+    //        glColor3f(1.0, 1.0, 0.0);
+    //        glVertex4fv(lightpos);
+    //        glVertex4f(lightpos[0], lightpos[1] + 1, lightpos[2], lightpos[3]);
+    //        glVertex4f(lightpos[0], lightpos[1], lightpos[2] + 1, lightpos[3]);
+    //    glEnd();
 
     /**** Axes in the global coordinate system ****/
 
     glDisable(GL_LIGHTING);
     glColor3f(1.0f, 0.0f, 0.0f);
     glBegin(GL_LINES);
-        glVertex3f(-6.0f, 0.0f, 0.0f);
-        glVertex3f(6.0f, 0.0f, 0.0f);
+    glVertex3f(-6.0f, 0.0f, 0.0f);
+    glVertex3f(6.0f, 0.0f, 0.0f);
     glEnd();
     glColor3f(0.0f, 1.0f, 0.0f);
     glBegin(GL_LINES);
-        glVertex3f(0.0f, -6.0f, 0.0f);
-        glVertex3f(0.0f, 6.0f, 0.0f);
+    glVertex3f(0.0f, -6.0f, 0.0f);
+    glVertex3f(0.0f, 6.0f, 0.0f);
     glEnd();
     glColor3f(0.0f, 0.0f, 1.0f);
     glBegin(GL_LINES);
-        glVertex3f(0.0f, 0.0f, -6.0f);
-        glVertex3f(0.0f, 0.0f, 6.0f);
+    glVertex3f(0.0f, 0.0f, -6.0f);
+    glVertex3f(0.0f, 0.0f, 6.0f);
     glEnd();
     glEnable(GL_LIGHTING);
 
@@ -329,7 +339,7 @@ void CCanvas::paintGL()
     */
 
     // Look at the ObjModel class to see how the drawing is done
-//    glScalef(100,100,100);
+    //    glScalef(100,100,100);
     glScalef(0.2f, 0.2f, 0.2f);
     /*
     TrackPiece piece1(straight);
@@ -337,21 +347,40 @@ void CCanvas::paintGL()
     TrackPiece piece4(straightY);
     */
 
+    glPushMatrix();
     for (TrackPiece & piece : track) {
         piece.draw();
         piece.applyTransforms();
     }
+    glPopMatrix();
 
-//    modelTracks.draw();
+    textureTracks.unbind();
+
+    int i;
+    for (i = 0; i < tau; ++i) {
+        track[i % track.size()].applyTransforms();
+    }
+
+    double trash;
+    double diff = modf(tau, &trash);
+    track[i % track.size()].applyPartialTransforms(diff);
+
+    Sphere sphere(20, 20);
+    glTranslated(0, 3.99761/2.0, 1.23005);
+    sphere.draw();
+
+    tau += 0.01;
+
+
+    //    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
     /*
      * The models you load can have different scales. If you are drawing a proper model but nothing
      * is shown, check the scale of the model, your camera could be for example inside of it.
      */
     //glScalef(0.02f, 0.02f, 0.02f);
-//    modelTrain2.draw();
+    //    modelTrain2.draw();
     // Remove the last transformation matrix from the stack - you have drawn your last
     // object with a new transformation and now you go back to the previous one
     glPopMatrix();
-    textureTracks.unbind();
 }

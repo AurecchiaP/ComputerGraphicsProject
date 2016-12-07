@@ -9,3 +9,7 @@ void TrackPiece::draw() {
 void TrackPiece::applyTransforms() {
     type.applyTransforms();
 }
+
+void TrackPiece::applyPartialTransforms(double fraction) {
+    type.applyPartialTransforms(fraction);
+}
