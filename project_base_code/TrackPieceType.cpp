@@ -1,19 +1,19 @@
 #include "TrackPieceType.h"
 
 TrackPieceType::TrackPieceType
-(const std::string & filename, std::function<void()> transform, std::function<void(double)> partial_transform) :
-    model(filename), transform(transform), partial_transform(partial_transform) {}
+(const std::string & filename, std::function<void(double)> transform) :
+    model(filename), transform(transform) {}
 
 void TrackPieceType::draw() {
     model.draw();
 }
 
 void TrackPieceType::applyTransforms() {
-    transform();
+    transform(1.0);
 }
 
-void TrackPieceType::applyPartialTransforms(double tau) {
-    partial_transform(tau);
+void TrackPieceType::applyTransforms(double tau) {
+    transform(tau);
 }
 
 void TrackPieceType::init() {

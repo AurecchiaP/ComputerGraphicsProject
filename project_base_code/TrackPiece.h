@@ -11,7 +11,7 @@ public:
     TrackPiece(TrackPieceType & type);
     void draw();
     void applyTransforms();
-    void applyPartialTransforms(double fraction);
+    void applyTransforms(double fraction);
 };
 
 #endif // TRACKPIECE_H

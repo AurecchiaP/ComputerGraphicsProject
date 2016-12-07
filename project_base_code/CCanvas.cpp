@@ -10,34 +10,26 @@ using namespace std;
 //-----------------------------------------------------------------------------
 // Track types
 
-static TrackPieceType straight("models/straight_track_short.obj",
-                                    []() {
-    glTranslated(-10.8618, 0.0, 0.0);
-},
-[](double diff) {
+static TrackPieceType straight("models/straight_track_short.obj",[](double diff) {
     glTranslated(-10.8618 * diff, 0.0, 0.0);
 });
 
-static TrackPieceType left60("models/curved60.obj",
-                             []() {
-    glTranslated(-9.11696, -5.13948, 0.0);
-    glRotated(60, 0, 0, 1);
-},
-[](double diff) {
-    double x = diff * -9.11696;
-    double y = -0.00106363 * (x*x*x*x) - 0.0145636 * (x*x*x) - 0.122086 * (x*x) - 0.144834 * x;
+static TrackPieceType left60("models/curved60.obj", [](double diff) {
+    const double r = sqrt(9.11696*9.11696 + 5.13948*5.13948);
+
+    const double x = -r * sin(PI/3.0 * diff);
+    const double y = r * cos(PI/3.0 * diff) - r;
+
     glTranslated(x, y, 0.0);
     glRotated(60 * diff, 0, 0, 1);
 });
 
-static TrackPieceType right60("models/curved-60.obj",
-                             []() {
-    glTranslated(-12.5744, 7.13154, 0);
-    glRotated(-60, 0, 0, 1);
-},
-[](double diff) {
-    double x = diff * -12.5744;
-    double y = - 0.0000368565 * (x*x*x*x*x) - 0.000899351 * (x*x*x*x) - 0.0089823 * (x*x*x) - 0.00164132 * (x*x) - 0.0342093 * x;
+static TrackPieceType right60("models/curved-60.obj", [](double diff) {
+    const double r = sqrt(12.5744*12.5744 + 7.13154*7.13154);
+
+    const double x = r * sin(-PI/3.0 * diff);
+    const double y = -r * cos(-PI/3.0 * diff) + r;
+
     glTranslated(x, y, 0.0);
     glRotated(-60 * diff, 0, 0, 1);
 });
@@ -126,6 +118,31 @@ void CCanvas::initializeGL()
     track.emplace_back(straight);
     track.emplace_back(right60);
     track.emplace_back(straight);
+
+
+//        track.emplace_back(right60);
+//        track.emplace_back(right60);
+//        track.emplace_back(straight);
+//        track.emplace_back(straight);
+//        track.emplace_back(left60);
+//        track.emplace_back(right60);
+//        track.emplace_back(straight);
+//        track.emplace_back(right60);
+
+//        track.emplace_back(right60);
+//        track.emplace_back(right60);
+
+//        track.emplace_back(straight);
+//        track.emplace_back(left60);
+//        track.emplace_back(straight);
+
+//        track.emplace_back(right60);
+//        track.emplace_back(straight);
+
+//        track.emplace_back(right60);
+//        track.emplace_back(straight);
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -364,7 +381,7 @@ void CCanvas::paintGL()
 
     double trash;
     double diff = modf(tau, &trash);
-    track[i % track.size()].applyPartialTransforms(diff);
+    track[i % track.size()].applyTransforms(diff);
 
     glTranslated(0, 3.99761/2.0, 1.23005);
     glRotated(-90, 0, 0, 1);
