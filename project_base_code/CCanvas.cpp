@@ -10,7 +10,7 @@ using namespace std;
 // Track types
 
 static TrackPieceType straight("models/straight_track_short.obj",[](double diff) {
-    glTranslated(-13.22809 * diff, 0.0, 0.0);
+    glTranslated(-10.8618 * diff, 0.0, 0.0);
 });
 
 static TrackPieceType left60("models/curved60.obj", [](double diff) {
@@ -42,7 +42,7 @@ static double tau = 0.0;
 
 void CCanvas::initializeGL()
 {
-    glClearColor(0.5f, 0.5f, 0.5f, 0.5f);			   // black background
+    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
@@ -81,6 +81,7 @@ void CCanvas::initializeGL()
      */
     textureTracks.setTexture();
     textureFloor.setTexture();
+    textureFloorboards.setTexture();
     textureTrain.setTexture();
 
     // Initialize models for all types
@@ -349,29 +350,15 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
-<<<<<<< Updated upstream
-    // scaled floor texture
-    textureFloor.bind();
-    glPushMatrix();
-    glScalef(0.2f, 0.2f, 0.2f);
-    floor.draw();
-    glPopMatrix();
-    textureFloor.unbind();
-
-//    glScalef(0.2f, 0.2f, 0.2f);
-
-
-=======
     // alternative scaled floor texture
-//    textureFloor.bind();
-//    glBegin(GL_QUADS);
-//      glTexCoord2f(10, 50.0);    glVertex3f(-80, -40, 0 );
-//      glTexCoord2f(10.0, 10.0);    glVertex3f(0, 40, 0 );
-//      glTexCoord2f(50.0, 10.0);    glVertex3f(0, 40, 0 );
-//      glTexCoord2f(50.0, 50.0);    glVertex3f(80, -40, 0 );
-//    glEnd();
-//    textureFloor.unbind();
->>>>>>> Stashed changes
+    textureFloorboards.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-80.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(8.0, 0.0);    glVertex3f(80.0f, 50.0f, -0.2f ); // top right
+      glTexCoord2f(8.0, 8.0);    glVertex3f(80.0f, -10.0f, -0.2f ); // bottom right
+    glEnd();
+    textureFloorboards.unbind();
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object

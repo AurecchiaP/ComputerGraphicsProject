@@ -31,6 +31,7 @@ public:
         textureTracks("textures/wood.jpg"),
         textureTrain("textures/woodRed.jpg"),
         textureFloor("textures/carpet2.jpg"),
+        textureFloorboards("textures/floor.jpg"),
         floor("models/floor.obj"),
         track(),
         train("models/train.obj")
@@ -75,6 +76,7 @@ private:
     Texture textureTrain;
     // Model loaded from .obj format
     Texture textureFloor;
+    Texture textureFloorboards;
     ObjModel floor;
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
