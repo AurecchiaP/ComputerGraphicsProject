@@ -350,7 +350,7 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
-    // alternative scaled floor texture
+    // floorboards
     textureFloorboards.bind();
     glBegin(GL_QUADS);
       glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
@@ -388,7 +388,7 @@ void CCanvas::paintGL()
     // scaled floor texture
     textureFloor.bind();
     glPushMatrix();
-    glTranslatef(-85.0,0,0);
+    glTranslatef(-85.0,-1.5f,0);
     floor.draw();
     glTranslatef(0,45,0);
     floor.draw();
