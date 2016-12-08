@@ -10,7 +10,7 @@ using namespace std;
 // Track types
 
 static TrackPieceType straight("models/straight_track_short.obj",[](double diff) {
-    glTranslated(-10.8618 * diff, 0.0, 0.0);
+    glTranslated(-13.22809 * diff, 0.0, 0.0);
 });
 
 static TrackPieceType left60("models/curved60.obj", [](double diff) {
