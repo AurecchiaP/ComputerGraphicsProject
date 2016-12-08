@@ -349,6 +349,7 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
+<<<<<<< Updated upstream
     // scaled floor texture
     textureFloor.bind();
     glPushMatrix();
@@ -360,6 +361,17 @@ void CCanvas::paintGL()
 //    glScalef(0.2f, 0.2f, 0.2f);
 
 
+=======
+    // alternative scaled floor texture
+//    textureFloor.bind();
+//    glBegin(GL_QUADS);
+//      glTexCoord2f(10, 50.0);    glVertex3f(-80, -40, 0 );
+//      glTexCoord2f(10.0, 10.0);    glVertex3f(0, 40, 0 );
+//      glTexCoord2f(50.0, 10.0);    glVertex3f(0, 40, 0 );
+//      glTexCoord2f(50.0, 50.0);    glVertex3f(80, -40, 0 );
+//    glEnd();
+//    textureFloor.unbind();
+>>>>>>> Stashed changes
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
@@ -385,42 +397,35 @@ void CCanvas::paintGL()
         piece->applyTransforms();
     }
     glPopMatrix();
-
     textureTracks.unbind();
+    // scaled floor texture
+    textureFloor.bind();
+    glPushMatrix();
+    glTranslatef(-85.0,0,0);
+    floor.draw();
+    glTranslatef(0,45,0);
+    floor.draw();
+    textureFloor.unbind();
+    for(int i = 0 ; i < 4; ++i){
+        textureFloor.bind();
+
+        glTranslatef(45.0,0,0);
+        floor.draw();
+        if(i%2==0){
+            glTranslatef(0,-45,0);
+            floor.draw();
+        }else{
+            glTranslatef(0,45,0);
+            floor.draw();
+        }
+        textureFloor.unbind();
+    }
+    glPopMatrix();
+
     int i;
     for (i = 0; i < tau; ++i) {
         track[i % track.size()]->applyTransforms();
     }
-
-    // FIXME
-//    textureFloor.bind();
-//    glTranslatef(-85.0,0,0);
-//    floor.draw();
-//    glTranslatef(0,45,0);
-//    floor.draw();
-//    textureFloor.unbind();
-//    for(int i = 0 ; i < 4; ++i){
-//        textureFloor.bind();
-
-//        glTranslatef(45.0,0,0);
-//        floor.draw();
-//        if(i%2==0){
-//            glTranslatef(0,-45,0);
-//            floor.draw();
-//        }else{
-//            glTranslatef(0,45,0);
-//            floor.draw();
-//        }
-//        textureFloor.unbind();
-//    }
-
-
-
-//    glScalef(1.2f, 1.2f, 1.2f);
-//    textureFloor.bind();
-//    floor.draw();
-//    glTranslatef(10.0,10.0,10.0);
-
 
     double trash;
     double diff = modf(tau, &trash);
