@@ -9,11 +9,12 @@ class TrackPieceType
 {
 private:
     ObjModel model;
-    const std::function<void()> transform;
+    const std::function<void(double)> transform;
 public:
-    TrackPieceType(const std::string & filename, std::function<void()> transform);
+    TrackPieceType(const std::string & filename, std::function<void(double)> transform);
     void draw();
     void applyTransforms();
+    void applyTransforms(double fraction);
     void init();
 };
 
