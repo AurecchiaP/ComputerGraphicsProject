@@ -349,6 +349,17 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
+    // scaled floor texture
+    textureFloor.bind();
+    glPushMatrix();
+    glScalef(2.0f, -0.6f, 0.2f);
+    floor.draw();
+    glPopMatrix();
+    textureFloor.unbind();
+
+//    glScalef(0.2f, 0.2f, 0.2f);
+
+
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
@@ -376,7 +387,6 @@ void CCanvas::paintGL()
     glPopMatrix();
 
     textureTracks.unbind();
-
     int i;
     for (i = 0; i < tau; ++i) {
         track[i % track.size()]->applyTransforms();
@@ -423,7 +433,6 @@ void CCanvas::paintGL()
     textureTrain.bind();
     train.draw();
     textureTrain.unbind();
-
     tau += 0.01;
 
 
