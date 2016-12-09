@@ -10,7 +10,7 @@ using namespace std;
 // Track types
 
 static TrackPieceType straight("models/straight_track_short.obj",[](double diff) {
-    glTranslated(-10.8618 * diff, 0.0, 0.0);
+    glTranslated(-13.22809 * diff, 0.0, 0.0);
 });
 
 static TrackPieceType left60("models/curved60.obj", [](double diff) {
@@ -42,7 +42,7 @@ static double tau = 0.0;
 
 void CCanvas::initializeGL()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.5f);			   // black background
+    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
@@ -80,6 +80,9 @@ void CCanvas::initializeGL()
      * Before you can use OBJ/PLY model, you need to initialize it by calling init() method.
      */
     textureTracks.setTexture();
+    textureFloor.setTexture();
+    textureFloorboards.setTexture();
+    textureTrain.setTexture();
 
     // Initialize models for all types
     straight.init();
@@ -87,7 +90,8 @@ void CCanvas::initializeGL()
     right60.init();
     //Initialize train model
     train.init();
-
+    // initialise floor
+    floor.init();
 
     // Create the track
     track.push_back(&straight);
@@ -345,6 +349,15 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
+    // floorboards
+    textureFloorboards.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-80.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(8.0, 0.0);    glVertex3f(80.0f, 50.0f, -0.2f ); // top right
+      glTexCoord2f(8.0, 8.0);    glVertex3f(80.0f, -10.0f, -0.2f ); // bottom right
+    glEnd();
+    textureFloorboards.unbind();
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
@@ -370,8 +383,30 @@ void CCanvas::paintGL()
         piece->applyTransforms();
     }
     glPopMatrix();
-
     textureTracks.unbind();
+    // scaled floor texture
+    textureFloor.bind();
+    glPushMatrix();
+    glTranslatef(-85.0,-1.5f,0);
+    floor.draw();
+    glTranslatef(0,45,0);
+    floor.draw();
+    textureFloor.unbind();
+    for(int i = 0 ; i < 4; ++i){
+        textureFloor.bind();
+
+        glTranslatef(45.0,0,0);
+        floor.draw();
+        if(i%2==0){
+            glTranslatef(0,-45,0);
+            floor.draw();
+        }else{
+            glTranslatef(0,45,0);
+            floor.draw();
+        }
+        textureFloor.unbind();
+    }
+    glPopMatrix();
 
     int i;
     for (i = 0; i < tau; ++i) {
@@ -386,10 +421,10 @@ void CCanvas::paintGL()
     glRotated(-90, 0, 0, 1);
     glRotated(90, 1, 0, 0);
     glScaled(1.1, 1.1, 1.1);
+    textureTrain.bind();
     train.draw();
-
+    textureTrain.unbind();
     tau += 0.01;
-
 
     //    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
@@ -402,4 +437,6 @@ void CCanvas::paintGL()
     // Remove the last transformation matrix from the stack - you have drawn your last
     // object with a new transformation and now you go back to the previous one
     glPopMatrix();
+    textureTracks.unbind();
+//    textureFloor.unbind();
 }
