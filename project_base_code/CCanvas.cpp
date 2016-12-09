@@ -90,8 +90,7 @@ void CCanvas::initializeGL()
     right60.init();
     //Initialize train model
     train.init();
-
-
+    // initialise floor
     floor.init();
 
     // Create the track
@@ -426,7 +425,6 @@ void CCanvas::paintGL()
     train.draw();
     textureTrain.unbind();
     tau += 0.01;
-
 
     //    modelTracks.draw();
     // Look at the PlyModel class to see how the drawing is done
