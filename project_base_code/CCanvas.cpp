@@ -2,7 +2,7 @@
 #include "Base.h"
 #include "Sphere.h"
 #include "TrackPieceType.h"
-
+#include "trackgenerator.h"
 
 using namespace std;
 
@@ -88,35 +88,55 @@ void CCanvas::initializeGL()
     //Initialize train model
     train.init();
 
+    TrackGenerator generator;
+
+    vector<char> & tracks = generator.generateCircuit(10);
+
+    for (char & piece:tracks) {
+        switch (piece) {
+            case 0:
+                //ADD Straight
+                track.push_back(&straight);
+                break;
+            case 1:
+                //ADD Right
+                track.push_back(&right60);
+                break;
+            default:
+                //ADD Left
+                track.push_back(&left60);
+                break;
+        }
+    }
 
     // Create the track
-    track.push_back(&straight);
-    track.push_back(&left60);
-    track.push_back(&straight);
-    track.push_back(&right60);
-    track.push_back(&right60);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&left60);
-    track.push_back(&right60);
-    track.push_back(&right60);
-    track.push_back(&right60);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&left60);
-    track.push_back(&right60);
-    track.push_back(&right60);
-    track.push_back(&left60);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&right60);
-    track.push_back(&right60);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&right60);
-    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&left60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
 
 
 //        track.push_back(&right60);
@@ -357,7 +377,7 @@ void CCanvas::paintGL()
 
     // Look at the ObjModel class to see how the drawing is done
     //    glScalef(100,100,100);
-    glScalef(0.2f, 0.2f, 0.2f);
+    glScalef(0.1f, 0.1f, 0.1f);
     /*
     TrackPiece piece1(straight);
     TrackPiece piece3(straightLong);
