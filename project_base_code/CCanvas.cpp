@@ -11,8 +11,8 @@ using namespace std;
 //-----------------------------------------------------------------------------
 // Track types
 //length is the size of the straight piece
-static TrackPieceType straight(10.8618, "models/straight_track_short.obj",[](double diff) {
-    glTranslated(-10.8618 * diff, 0.0, 0.0);
+static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double diff) {
+    glTranslated(-13.22809 * diff, 0.0, 0.0);
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
@@ -40,11 +40,13 @@ static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](dou
 // Train types
 static TrainPieceType locomotive("models/train.obj", 5.0);
 
+static TrainPieceType wagon("models/wagon_short.obj", 5.5);
+
 //-----------------------------------------------------------------------------
 
 void CCanvas::initializeGL()
 {
-    glClearColor(0.0f, 0.0f, 0.0f, 0.5f);			   // black background
+    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
@@ -82,6 +84,9 @@ void CCanvas::initializeGL()
      * Before you can use OBJ/PLY model, you need to initialize it by calling init() method.
      */
     textureTracks.setTexture();
+    textureFloor.setTexture();
+    textureFloorboards.setTexture();
+    textureTrain.setTexture();
 
     // Initialize models for all types
     straight.init();
@@ -89,7 +94,10 @@ void CCanvas::initializeGL()
     right60.init();
     //Initialize train models
     locomotive.init();
+    wagon.init();
 
+    // initialise floor
+    floor.init();
 
     // Create the track
     track.push_back(&straight);
@@ -107,17 +115,49 @@ void CCanvas::initializeGL()
     track.push_back(&straight);
     track.push_back(&straight);
     track.push_back(&left60);
-    track.push_back(&straight);
     track.push_back(&right60);
     track.push_back(&right60);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&straight);
     track.push_back(&left60);
-    track.push_back(&right60);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&straight);
     track.push_back(&right60);
     track.push_back(&right60);
     track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&right60);
+    track.push_back(&straight);
+
+    // Other track
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+
+
+    // Yet another possible track
 //    track.push_back(&straight);
 //    track.push_back(&left60);
 //    track.push_back(&right60);
@@ -164,7 +204,7 @@ void CCanvas::initializeGL()
     // Create train, wagons pushed in inverse order
 
     for (int i = 0; i < 10; ++i) {
-        train.push_back(&locomotive);
+        train.push_back(&wagon);
     }
     train.push_back(&locomotive);
 }
@@ -297,7 +337,7 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslated(5.0, -0.5, -15.0);
+        glTranslated(5.5, -0.5, -15.0);
         glRotated(-30, 1.0, 0.0, 0.0);
         break;
     case Cockpit:
@@ -370,6 +410,15 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
+    // floorboards
+    textureFloorboards.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-80.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(8.0, 0.0);    glVertex3f(80.0f, 50.0f, -0.2f ); // top right
+      glTexCoord2f(8.0, 8.0);    glVertex3f(80.0f, -10.0f, -0.2f ); // bottom right
+    glEnd();
+    textureFloorboards.unbind();
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
@@ -389,9 +438,32 @@ void CCanvas::paintGL()
         piece->applyTransforms();
     }
     glPopMatrix();
-
     textureTracks.unbind();
+    // scaled floor texture
+    textureFloor.bind();
+    glPushMatrix();
+    glTranslatef(-85.0,-1.5f,0);
+    floor.draw();
+    glTranslatef(0,45,0);
+    floor.draw();
+    textureFloor.unbind();
+    for(int i = 0 ; i < 4; ++i){
+        textureFloor.bind();
 
+        glTranslatef(45.0,0,0);
+        floor.draw();
+        if(i%2==0){
+            glTranslatef(0,-45,0);
+            floor.draw();
+        }else{
+            glTranslatef(0,45,0);
+            floor.draw();
+        }
+        textureFloor.unbind();
+    }
+    glPopMatrix();
+
+    // Draw train
     double accumulatedTrainLength = 0.0;
     for(TrainPieceType * piece : train) {
         double currentPosition = trainPosition + accumulatedTrainLength;
@@ -406,19 +478,21 @@ void CCanvas::paintGL()
             currentPosition -= track[i]->len;
             track[i]->applyTransforms();
         }
-
         track[i]->applyTransforms(currentPosition / track[i]->len);
 
         glTranslated(0, 3.99761/2.0, 0.922535);
         glRotated(-90, 0, 0, 1);
         glRotated(90, 1, 0, 0);
         glScaled(1.1, 1.1, 1.1);
+        textureTrain.bind();
         piece->draw();
+        textureTrain.unbind();
         glPopMatrix();
 
         accumulatedTrainLength += piece->len;
     }
 
+    // Move train around track
     trainPosition += TRAINSPEED;
     if ( trainPosition >= trackLength){
         trainPosition -= trackLength;

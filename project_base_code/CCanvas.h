@@ -30,7 +30,12 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        track()
+        textureTrain("textures/woodRed.jpg"),
+        textureFloor("textures/carpet2.jpg"),
+        textureFloorboards("textures/floor.jpg"),
+        floor("models/floor.obj"),
+        track(),
+        train()
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -69,8 +74,11 @@ private:
 
     // Models and textures
     Texture textureTracks;
+    Texture textureTrain;
     // Model loaded from .obj format
-//    ObjModel modelTracks;
+    Texture textureFloor;
+    Texture textureFloorboards;
+    ObjModel floor;
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
 
@@ -83,4 +91,4 @@ private:
     double trackLength = 0;
 };
 
-#endif 
+#endif

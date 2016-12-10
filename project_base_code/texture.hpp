@@ -31,7 +31,6 @@ public:
     {
         glDisable(GL_TEXTURE_2D);
     }
-
     // Set 2D texture.
     void setTexture()
     {
