@@ -4,7 +4,7 @@
 #include "TrackPieceType.h"
 #include "TrainPieceType.h"
 
-#define TRAINSPEED 0.2
+#define TRAINSPEED 0.25
 
 using namespace std;
 
@@ -429,7 +429,7 @@ void CCanvas::paintGL()
      *  glGetFloatv (GL_MODELVIEW_MATRIX, matrix);
     */
 
-    // Look at the ObjModel class to see how the drawing is done
+    // Draw track
     glScalef(0.2f, 0.2f, 0.2f);
 
     glPushMatrix();
@@ -439,6 +439,8 @@ void CCanvas::paintGL()
     }
     glPopMatrix();
     textureTracks.unbind();
+
+
     // scaled floor texture
     textureFloor.bind();
     glPushMatrix();
@@ -464,37 +466,38 @@ void CCanvas::paintGL()
     glPopMatrix();
 
     // Draw train
-    double accumulatedTrainLength = 0.0;
+    size_t i = 0;
+    double currentPosition = trainPosition;
     for(TrainPieceType * piece : train) {
-        double currentPosition = trainPosition + accumulatedTrainLength;
-        if (currentPosition >= trackLength){
-            currentPosition -= trackLength;
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
+            track[i]->applyTransforms();
+            i = (i + 1) % track.size();
         }
 
         glPushMatrix();
-
-        size_t i;
-        for (i = 0; i < track.size() && currentPosition >= track[i]->len; ++i){
-            currentPosition -= track[i]->len;
-            track[i]->applyTransforms();
-        }
         track[i]->applyTransforms(currentPosition / track[i]->len);
 
         glTranslated(0, 3.99761/2.0, 0.922535);
         glRotated(-90, 0, 0, 1);
         glRotated(90, 1, 0, 0);
         glScaled(1.1, 1.1, 1.1);
+
         textureTrain.bind();
         piece->draw();
         textureTrain.unbind();
+
         glPopMatrix();
 
-        accumulatedTrainLength += piece->len;
+        currentPosition += piece->len;
+        while (currentPosition >= trackLength){
+            currentPosition -= trackLength;
+        }
     }
 
     // Move train around track
     trainPosition += TRAINSPEED;
-    if ( trainPosition >= trackLength){
+    while (trainPosition >= trackLength) {
         trainPosition -= trackLength;
     }
 }
