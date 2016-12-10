@@ -3,6 +3,7 @@
 #include "Sphere.h"
 #include "TrackPieceType.h"
 #include "TrainPieceType.h"
+#include "keyenterreceiver.h"
 
 #define MOUSE_SPEED 0.15
 
@@ -28,6 +29,21 @@ void CCanvas::mousePressEvent(QMouseEvent *event){
     pos = event->pos();
 }
 /* end mouse events */
+
+/* keyboard events */
+
+void CCanvas::keyPressEvent( QKeyEvent * event ){
+    if( event->key() == Qt::Key_Alt ){
+        x_translate += 0.1;
+    }else if (event->key() == Qt::Key_Control){
+        x_translate -= 0.1;
+    }else if (event->key() == Qt::Key_Shift){
+        y_translate += 0.1;
+    }else if (event->key() == Qt::Key_Meta){
+        y_translate -= 0.1;
+    }
+}
+/* end keyboard */
 
 //-----------------------------------------------------------------------------
 // Track types
@@ -67,6 +83,9 @@ static TrainPieceType wagon("models/wagon_short.obj", 5.5);
 
 void CCanvas::initializeGL()
 {
+//    keyEnterReceiver* key = new keyEnterReceiver();
+//    this->installEventFilter(key);
+
     glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
@@ -358,9 +377,10 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslated(5.5, -0.5, -15.0);
+        glTranslated(x_translate, y_translate, -15.0);
         glRotated(x_rotate, 1.0, 0.0, 0.0);
         glRotated(y_rotate, 0.0, 1.0, 0.0);
+
         break;
     case Cockpit:
         // Maybe you want to have an option to view the scene from the train cockpit, up to you
