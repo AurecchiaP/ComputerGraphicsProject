@@ -76,6 +76,11 @@ private:
 
     std::vector<TrackPieceType *> track;
     ObjModel train;
+
+    //position of last wagon? on track
+    double trainPosition = 0;
+    //total length of the track
+    double trackLength = 0;
 };
 
 #endif 

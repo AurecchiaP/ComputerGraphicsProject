@@ -3,19 +3,20 @@
 #include "Sphere.h"
 #include "TrackPieceType.h"
 
+#define TRAINSPEED 0.2
 
 using namespace std;
 
 //-----------------------------------------------------------------------------
 // Track types
-
-static TrackPieceType straight("models/straight_track_short.obj",[](double diff) {
+//length is the size of the straight piece
+static TrackPieceType straight(10.8618, "models/straight_track_short.obj",[](double diff) {
     glTranslated(-10.8618 * diff, 0.0, 0.0);
 });
 
-static TrackPieceType left60("models/curved60.obj", [](double diff) {
+//length is the arc of circonference with radius = (external_radius + internal_radius) / 2
+static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double diff) {
     const double r = sqrt(9.11696*9.11696 + 5.13948*5.13948);
-
     const double x = -r * sin(PI/3.0 * diff);
     const double y = r * cos(PI/3.0 * diff) - r;
 
@@ -23,7 +24,8 @@ static TrackPieceType left60("models/curved60.obj", [](double diff) {
     glRotated(60 * diff, 0, 0, 1);
 });
 
-static TrackPieceType right60("models/curved-60.obj", [](double diff) {
+//length is the arc of circonference with radius = (external_radius + internal_radius) / 2
+static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double diff) {
     const double r = sqrt(12.5744*12.5744 + 7.13154*7.13154);
 
     const double x = r * sin(-PI/3.0 * diff);
@@ -35,7 +37,7 @@ static TrackPieceType right60("models/curved-60.obj", [](double diff) {
 
 //-------- Magic parameter tau
 
-static double tau = 0.0;
+//static double tau = 0.0;
 
 
 //-----------------------------------------------------------------------------
@@ -105,18 +107,31 @@ void CCanvas::initializeGL()
     track.push_back(&straight);
     track.push_back(&straight);
     track.push_back(&left60);
+    track.push_back(&straight);
     track.push_back(&right60);
     track.push_back(&right60);
+    track.push_back(&straight);
+    track.push_back(&straight);
+    track.push_back(&straight);
     track.push_back(&left60);
-    track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&straight);
+    track.push_back(&right60);
     track.push_back(&right60);
     track.push_back(&right60);
     track.push_back(&straight);
-    track.push_back(&straight);
-    track.push_back(&right60);
-    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&left60);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&left60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
+//    track.push_back(&straight);
+//    track.push_back(&right60);
+//    track.push_back(&straight);
 
 
 //        track.push_back(&right60);
@@ -141,6 +156,10 @@ void CCanvas::initializeGL()
 //        track.push_back(&right60);
 //        track.push_back(&straight);
 
+    //compute total length
+    for( auto piece : track){
+        trackLength += piece->len;
+    }
 
 }
 
@@ -348,7 +367,7 @@ void CCanvas::paintGL()
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
-    glPushMatrix();
+    //glPushMatrix();
     /*
      * Obtaining the values of the current modelview matrix
      *  GLfloat matrix[16];
@@ -356,13 +375,7 @@ void CCanvas::paintGL()
     */
 
     // Look at the ObjModel class to see how the drawing is done
-    //    glScalef(100,100,100);
     glScalef(0.2f, 0.2f, 0.2f);
-    /*
-    TrackPiece piece1(straight);
-    TrackPiece piece3(straightLong);
-    TrackPiece piece4(straightY);
-    */
 
     glPushMatrix();
     for (TrackPieceType * piece : track) {
@@ -373,33 +386,35 @@ void CCanvas::paintGL()
 
     textureTracks.unbind();
 
-    int i;
-    for (i = 0; i < tau; ++i) {
-        track[i % track.size()]->applyTransforms();
+    int trainLength = 20;
+    int wagonLength = 5;
+
+    for(int j = 0; j < trainLength; ++j){
+
+        glPushMatrix();
+        double currentPosition = trainPosition + j*wagonLength;
+        if ( currentPosition >= trackLength){
+            currentPosition -= trackLength;
+        }
+
+        int i;
+        for (i = 0; i < track.size() && currentPosition >= track[i]->len; ++i){
+            currentPosition -= track[i]->len;
+            track[i]->applyTransforms();
+        }
+
+        track[i]->applyTransforms(currentPosition / track[i]->len);
+
+        glTranslated(0, 3.99761/2.0, 0.922535);
+        glRotated(-90, 0, 0, 1);
+        glRotated(90, 1, 0, 0);
+        glScaled(1.1, 1.1, 1.1);
+        train.draw();
+        glPopMatrix();
     }
 
-    double trash;
-    double diff = modf(tau, &trash);
-    track[i % track.size()]->applyTransforms(diff);
-
-    glTranslated(0, 3.99761/2.0, 0.922535);
-    glRotated(-90, 0, 0, 1);
-    glRotated(90, 1, 0, 0);
-    glScaled(1.1, 1.1, 1.1);
-    train.draw();
-
-    tau += 0.01;
-
-
-    //    modelTracks.draw();
-    // Look at the PlyModel class to see how the drawing is done
-    /*
-     * The models you load can have different scales. If you are drawing a proper model but nothing
-     * is shown, check the scale of the model, your camera could be for example inside of it.
-     */
-    //glScalef(0.02f, 0.02f, 0.02f);
-    //    modelTrain2.draw();
-    // Remove the last transformation matrix from the stack - you have drawn your last
-    // object with a new transformation and now you go back to the previous one
-    glPopMatrix();
+    trainPosition = (trainPosition + TRAINSPEED);
+    if ( trainPosition >= trackLength){
+        trainPosition -= trackLength;
+    }
 }

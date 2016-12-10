@@ -1,8 +1,8 @@
 #include "TrackPieceType.h"
 
 TrackPieceType::TrackPieceType
-(const std::string & filename, std::function<void(double)> transform) :
-    model(filename), transform(transform) {}
+( double len, const std::string & filename, std::function<void(double)> transform) :
+    model(filename), transform(transform), len(len) {}
 
 void TrackPieceType::draw() {
     model.draw();

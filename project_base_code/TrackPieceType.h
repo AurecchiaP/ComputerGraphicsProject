@@ -11,7 +11,8 @@ private:
     ObjModel model;
     const std::function<void(double)> transform;
 public:
-    TrackPieceType(const std::string & filename, std::function<void(double)> transform);
+    TrackPieceType( double len, const std::string & filename, std::function<void(double)> transform);
+    const double len;
     void draw();
     void applyTransforms();
     void applyTransforms(double fraction);
