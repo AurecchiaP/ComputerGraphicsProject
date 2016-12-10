@@ -47,6 +47,8 @@ protected:
     void initializeGL();
     void resizeGL(int width, int height);
     void paintGL();
+    void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
 
 private:
     void lookAt(const GLdouble eyex,
@@ -89,6 +91,10 @@ private:
     double trainPosition = 0;
     //total length of the track
     double trackLength = 0;
+    //mouve coordinates
+    GLdouble x_rotate = -30;
+    GLdouble y_rotate = 0;
+    QPoint pos;
 };
 
 #endif
