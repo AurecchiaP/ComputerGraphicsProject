@@ -34,7 +34,7 @@ public:
         textureFloorboards("textures/floor.jpg"),
         floor("models/floor.obj"),
         track(),
-        train("models/train.obj")
+        train("models/wagon_short.obj")
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
