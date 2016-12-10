@@ -16,6 +16,7 @@
 #include "PlyModel.h"
 
 #include "TrackPieceType.h"
+#include "TrainPieceType.h"
 
 using namespace std;
 
@@ -29,8 +30,7 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        track(),
-        train("models/train.obj")
+        track()
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -75,9 +75,9 @@ private:
 //    PlyModel modelTrain2;
 
     std::vector<TrackPieceType *> track;
-    ObjModel train;
+    std::vector<TrainPieceType *> train;
 
-    //position of last wagon? on track
+    //position of last wagon on track
     double trainPosition = 0;
     //total length of the track
     double trackLength = 0;

@@ -2,6 +2,7 @@
 #include "Base.h"
 #include "Sphere.h"
 #include "TrackPieceType.h"
+#include "TrainPieceType.h"
 
 #define TRAINSPEED 0.2
 
@@ -35,10 +36,9 @@ static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](dou
     glRotated(-60 * diff, 0, 0, 1);
 });
 
-//-------- Magic parameter tau
-
-//static double tau = 0.0;
-
+//-----------------------------------------------------------------------------
+// Train types
+static TrainPieceType locomotive("models/train.obj", 5.0);
 
 //-----------------------------------------------------------------------------
 
@@ -87,8 +87,8 @@ void CCanvas::initializeGL()
     straight.init();
     left60.init();
     right60.init();
-    //Initialize train model
-    train.init();
+    //Initialize train models
+    locomotive.init();
 
 
     // Create the track
@@ -161,6 +161,12 @@ void CCanvas::initializeGL()
         trackLength += piece->len;
     }
 
+    // Create train, wagons pushed in inverse order
+
+    for (int i = 0; i < 10; ++i) {
+        train.push_back(&locomotive);
+    }
+    train.push_back(&locomotive);
 }
 
 //-----------------------------------------------------------------------------
@@ -386,18 +392,16 @@ void CCanvas::paintGL()
 
     textureTracks.unbind();
 
-    int trainLength = 20;
-    int wagonLength = 5;
-
-    for(int j = 0; j < trainLength; ++j){
-
-        glPushMatrix();
-        double currentPosition = trainPosition + j*wagonLength;
-        if ( currentPosition >= trackLength){
+    double accumulatedTrainLength = 0.0;
+    for(TrainPieceType * piece : train) {
+        double currentPosition = trainPosition + accumulatedTrainLength;
+        if (currentPosition >= trackLength){
             currentPosition -= trackLength;
         }
 
-        int i;
+        glPushMatrix();
+
+        size_t i;
         for (i = 0; i < track.size() && currentPosition >= track[i]->len; ++i){
             currentPosition -= track[i]->len;
             track[i]->applyTransforms();
@@ -409,11 +413,13 @@ void CCanvas::paintGL()
         glRotated(-90, 0, 0, 1);
         glRotated(90, 1, 0, 0);
         glScaled(1.1, 1.1, 1.1);
-        train.draw();
+        piece->draw();
         glPopMatrix();
+
+        accumulatedTrainLength += piece->len;
     }
 
-    trainPosition = (trainPosition + TRAINSPEED);
+    trainPosition += TRAINSPEED;
     if ( trainPosition >= trackLength){
         trainPosition -= trackLength;
     }

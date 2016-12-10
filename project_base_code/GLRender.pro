@@ -23,7 +23,8 @@ HEADERS += ./Base.h \
            ./PlyModel.h \
            ./objloader.hpp \
            ./tinyply.h \
-    TrackPieceType.h
+    TrackPieceType.h \
+    TrainPieceType.h
 
 # Source files
 SOURCES += ./CCanvas.cpp \
@@ -34,7 +35,8 @@ SOURCES += ./CCanvas.cpp \
            ./PlyModel.cpp \
            ./objloader.cpp \
            ./tinyply.cpp \
-    TrackPieceType.cpp
+    TrackPieceType.cpp \
+    TrainPieceType.cpp
 
 # Forms
 FORMS += ./GLRender.ui
