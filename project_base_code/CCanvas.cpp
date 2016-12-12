@@ -686,11 +686,17 @@ void CCanvas::paintGL()
         while (currentPosition >= trackLength){
             currentPosition -= trackLength;
         }
+        while (currentPosition < 0) {
+            currentPosition += trackLength;
+        }
     }
 
     // Move train around track
     trainPosition += TRAINSPEED;
     while (trainPosition >= trackLength) {
         trainPosition -= trackLength;
+    }
+    while (trainPosition < 0) {
+        trainPosition += trackLength;
     }
 }
