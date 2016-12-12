@@ -6,7 +6,7 @@
 
 #define MOUSE_SPEED 0.15
 
-#define TRAINSPEED 0.25
+#define MY_EPSILON 10e-9
 
 using namespace std;
 
@@ -35,13 +35,19 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
     if( event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
         x_translate += 0.5;
         c_rotate += 1;
-    }else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
+    } else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
         x_translate -= 0.5;
         c_rotate -= 1;
-    }else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
+    } else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
         y_translate += 0.5;
-    }else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
+    } else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
         y_translate -= 0.5;
+    } else if (event->key() == Qt::Key_K){
+        trainSpeed += 0.1;
+    } else if (event->key() == Qt::Key_L){
+        trainSpeed -= 0.1;
+    } else if (event->key() == Qt::Key_H){
+        trainSpeed = 0.0;
     }
 }
 /* end keyboard */
@@ -49,29 +55,42 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
 //-----------------------------------------------------------------------------
 // Track types
 //length is the size of the straight piece
-static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double diff) {
-    glTranslated(-13.22809 * diff, 0.0, 0.0);
+static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double diff, bool inv) {
+    if (inv) {
+        glTranslated(13.22809 * diff, 0.0, 0.0);
+    } else {
+        glTranslated(-13.22809 * diff, 0.0, 0.0);
+    }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double diff) {
+static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double diff, bool inv) {
     const double r = sqrt(9.11696*9.11696 + 5.13948*5.13948);
     const double x = -r * sin(PI/3.0 * diff);
     const double y = r * cos(PI/3.0 * diff) - r;
 
-    glTranslated(x, y, 0.0);
-    glRotated(60 * diff, 0, 0, 1);
+    if (inv) {
+        glRotated(-60 * diff, 0, 0, 1);
+        glTranslated(-x, -y, 0.0);
+    } else {
+        glTranslated(x, y, 0.0);
+        glRotated(60 * diff, 0, 0, 1);
+    }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double diff) {
+static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double diff, bool inv) {
     const double r = sqrt(12.5744*12.5744 + 7.13154*7.13154);
-
     const double x = r * sin(-PI/3.0 * diff);
     const double y = -r * cos(-PI/3.0 * diff) + r;
 
-    glTranslated(x, y, 0.0);
-    glRotated(-60 * diff, 0, 0, 1);
+    if (inv) {
+        glRotated(60 * diff, 0, 0, 1);
+        glTranslated(-x, -y, 0.0);
+    } else {
+        glTranslated(x, y, 0.0);
+        glRotated(-60 * diff, 0, 0, 1);
+    }
 });
 
 //-----------------------------------------------------------------------------
@@ -241,9 +260,9 @@ void CCanvas::initializeGL()
 
     // Create train, wagons pushed in inverse order
 
-    for (int i = 0; i < 10; ++i) {
-        train.push_back(&wagon);
-    }
+//    for (int i = 0; i < 10; ++i) {
+//        train.push_back(&wagon);
+//    }
     train.push_back(&locomotive);
 }
 
@@ -381,160 +400,41 @@ void CCanvas::setView(View _view) {
 
         break;
     case Cockpit:
-        GLdouble m[16];
-        // Compute matrix at train position
-        glPushMatrix();
+        // Revert position from in front of train
         glScaled(0.2, 0.2, 0.2);
-        size_t i = 0;
-        double currentPosition = trainPosition;
-        for (TrainPieceType * piece : train) {
-            currentPosition += piece->len;
+        glRotated(-90, 1, 0, 0);
+        glRotated(-c_rotate, 0, 0, 1);
+        glTranslated(-2, -3.99761/2.0, -3.922535);
+
+        // Get in front of train
+        double cameraPosition = trainPosition;
+        for (TrainPieceType * wagon : train) {
+            cameraPosition += wagon->len;
         }
-        while (currentPosition >= track[i]->len) {
-            currentPosition -= track[i]->len;
-            track[i]->applyTransforms();
+
+        // Get index position of current track piece
+        int i = 0;
+        double tmp;
+        for (tmp = cameraPosition; tmp >= track[i]->len; tmp -= track[i]->len) {
             i = (i + 1) % track.size();
         }
 
-        track[i]->applyTransforms(currentPosition / track[i]->len);
+        // Reverse partial transformation
+        track[i]->invertTransforms(tmp/track[i]->len);
 
-        glTranslated(2, 3.99761/2.0, 3 + 0.922535);
-        glRotated(c_rotate, 0, 0, 1);
-        glRotated(90, 1, 0, 0);
+        cameraPosition -= tmp;
 
-        glGetDoublev(GL_MODELVIEW, m);
+        // Reverse track transformations
+        while (cameraPosition >= MY_EPSILON) {
+            --i;
+            if (i < 0) {
+                i = track.size() - 1;
+            }
+            cameraPosition -= track[i]->len;
+            track[i]->invertTransforms();
+        }
 
-        glPopMatrix();
-
-
-        // Invert matrix
-        double inv[16];
-        double det;
-
-        inv[0] = m[5]  * m[10] * m[15] -
-                 m[5]  * m[11] * m[14] -
-                 m[9]  * m[6]  * m[15] +
-                 m[9]  * m[7]  * m[14] +
-                 m[13] * m[6]  * m[11] -
-                 m[13] * m[7]  * m[10];
-
-        inv[4] = -m[4]  * m[10] * m[15] +
-                  m[4]  * m[11] * m[14] +
-                  m[8]  * m[6]  * m[15] -
-                  m[8]  * m[7]  * m[14] -
-                  m[12] * m[6]  * m[11] +
-                  m[12] * m[7]  * m[10];
-
-        inv[8] = m[4]  * m[9] * m[15] -
-                 m[4]  * m[11] * m[13] -
-                 m[8]  * m[5] * m[15] +
-                 m[8]  * m[7] * m[13] +
-                 m[12] * m[5] * m[11] -
-                 m[12] * m[7] * m[9];
-
-        inv[12] = -m[4]  * m[9] * m[14] +
-                   m[4]  * m[10] * m[13] +
-                   m[8]  * m[5] * m[14] -
-                   m[8]  * m[6] * m[13] -
-                   m[12] * m[5] * m[10] +
-                   m[12] * m[6] * m[9];
-
-        inv[1] = -m[1]  * m[10] * m[15] +
-                  m[1]  * m[11] * m[14] +
-                  m[9]  * m[2] * m[15] -
-                  m[9]  * m[3] * m[14] -
-                  m[13] * m[2] * m[11] +
-                  m[13] * m[3] * m[10];
-
-        inv[5] = m[0]  * m[10] * m[15] -
-                 m[0]  * m[11] * m[14] -
-                 m[8]  * m[2] * m[15] +
-                 m[8]  * m[3] * m[14] +
-                 m[12] * m[2] * m[11] -
-                 m[12] * m[3] * m[10];
-
-        inv[9] = -m[0]  * m[9] * m[15] +
-                  m[0]  * m[11] * m[13] +
-                  m[8]  * m[1] * m[15] -
-                  m[8]  * m[3] * m[13] -
-                  m[12] * m[1] * m[11] +
-                  m[12] * m[3] * m[9];
-
-        inv[13] = m[0]  * m[9] * m[14] -
-                  m[0]  * m[10] * m[13] -
-                  m[8]  * m[1] * m[14] +
-                  m[8]  * m[2] * m[13] +
-                  m[12] * m[1] * m[10] -
-                  m[12] * m[2] * m[9];
-
-        inv[2] = m[1]  * m[6] * m[15] -
-                 m[1]  * m[7] * m[14] -
-                 m[5]  * m[2] * m[15] +
-                 m[5]  * m[3] * m[14] +
-                 m[13] * m[2] * m[7] -
-                 m[13] * m[3] * m[6];
-
-        inv[6] = -m[0]  * m[6] * m[15] +
-                  m[0]  * m[7] * m[14] +
-                  m[4]  * m[2] * m[15] -
-                  m[4]  * m[3] * m[14] -
-                  m[12] * m[2] * m[7] +
-                  m[12] * m[3] * m[6];
-
-        inv[10] = m[0]  * m[5] * m[15] -
-                  m[0]  * m[7] * m[13] -
-                  m[4]  * m[1] * m[15] +
-                  m[4]  * m[3] * m[13] +
-                  m[12] * m[1] * m[7] -
-                  m[12] * m[3] * m[5];
-
-        inv[14] = -m[0]  * m[5] * m[14] +
-                   m[0]  * m[6] * m[13] +
-                   m[4]  * m[1] * m[14] -
-                   m[4]  * m[2] * m[13] -
-                   m[12] * m[1] * m[6] +
-                   m[12] * m[2] * m[5];
-
-        inv[3] = -m[1] * m[6] * m[11] +
-                  m[1] * m[7] * m[10] +
-                  m[5] * m[2] * m[11] -
-                  m[5] * m[3] * m[10] -
-                  m[9] * m[2] * m[7] +
-                  m[9] * m[3] * m[6];
-
-        inv[7] = m[0] * m[6] * m[11] -
-                 m[0] * m[7] * m[10] -
-                 m[4] * m[2] * m[11] +
-                 m[4] * m[3] * m[10] +
-                 m[8] * m[2] * m[7] -
-                 m[8] * m[3] * m[6];
-
-        inv[11] = -m[0] * m[5] * m[11] +
-                   m[0] * m[7] * m[9] +
-                   m[4] * m[1] * m[11] -
-                   m[4] * m[3] * m[9] -
-                   m[8] * m[1] * m[7] +
-                   m[8] * m[3] * m[5];
-
-        inv[15] = m[0] * m[5] * m[10] -
-                  m[0] * m[6] * m[9] -
-                  m[4] * m[1] * m[10] +
-                  m[4] * m[2] * m[9] +
-                  m[8] * m[1] * m[6] -
-                  m[8] * m[2] * m[5];
-
-        det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
-
-        if (det == 0)
-            break;
-
-        det = 1.0 / det;
-
-        for (i = 0; i < 16; i++)
-            inv[i] = inv[i] * det;
-
-        // Use inverted matrix
-        glMultMatrixd(inv);
+        glScaled(5, 5, 5);
         break;
     }
 }
@@ -692,7 +592,7 @@ void CCanvas::paintGL()
     }
 
     // Move train around track
-    trainPosition += TRAINSPEED;
+    trainPosition += trainSpeed;
     while (trainPosition >= trackLength) {
         trainPosition -= trackLength;
     }
