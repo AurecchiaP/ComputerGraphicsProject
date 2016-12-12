@@ -432,30 +432,31 @@ void CCanvas::setView(View _view) {
         // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
 //        glRotated(-cy_rotate, 0, 1, 0);
-        glTranslated(-1.5, -3.99761/2.0, -3.422535);
+        glTranslated(-1.4, -3.99761/2.0, -3.5);
 
         // Get in front of train
-        double cameraPosition = trainPosition;
-        for (size_t i = 0; i < train.size() - currentWagon - 1; ++i) {
-            cameraPosition += train[i]->len;
+        double currentPosition = trainPosition;
+        for (size_t j = 0; j < train.size() - currentWagon - 1; ++j) {
+            currentPosition += train[j]->len;
         }
 
-        // Get index position of current track piece
+        // Get index position of current track piece, and number of track pieces to cover
         int i = 0;
         size_t steps = 0;
-        double tmp;
-        for (tmp = cameraPosition; tmp >= track[i]->len; tmp -= track[i]->len) {
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
             i = (i + 1) % track.size();
             ++steps;
         }
-        // Reverse partial transformation
-        track[i]->invertTransforms(tmp/track[i]->len);
 
-        // Reverse track transformations
+        // Reverse partial transformation
+        track[i]->invertTransforms(currentPosition / track[i]->len);
+
+        // Reverse remaining track transformations
         for (size_t j = 0; j < steps; ++j) {
             --i;
             if (i < 0) {
-                i = track.size() - 1;
+                i += track.size();
             }
             track[i]->invertTransforms();
         }
