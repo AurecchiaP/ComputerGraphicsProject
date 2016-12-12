@@ -35,7 +35,7 @@ void CCanvas::mousePressEvent(QMouseEvent *event){
 /* keyboard events */
 
 void CCanvas::keyPressEvent( QKeyEvent * event ){
-    if( event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
+    if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
         x_translate += 0.5;
     } else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
         x_translate -= 0.5;
@@ -55,6 +55,26 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
         } else {
             currentView = Perspective;
         }
+    } else if (event->key() == Qt::Key_0) {
+        currentWagon = 0;
+    } else if (event->key() == Qt::Key_1) {
+        currentWagon = 1;
+    } else if (event->key() == Qt::Key_2) {
+        currentWagon = 2;
+    } else if (event->key() == Qt::Key_3) {
+        currentWagon = 3;
+    } else if (event->key() == Qt::Key_4) {
+        currentWagon = 4;
+    } else if (event->key() == Qt::Key_5) {
+        currentWagon = 5;
+    } else if (event->key() == Qt::Key_6) {
+        currentWagon = 6;
+    } else if (event->key() == Qt::Key_7) {
+        currentWagon = 7;
+    } else if (event->key() == Qt::Key_8) {
+        currentWagon = 8;
+    } else if (event->key() == Qt::Key_9) {
+        currentWagon = 9;
     }
 }
 /* end keyboard */
@@ -411,13 +431,13 @@ void CCanvas::setView(View _view) {
         glRotated(-90, 1, 0, 0);
         // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
-        glRotated(-cy_rotate, 0, 1, 0);
-        glTranslated(-2, -3.99761/2.0, -3.922535);
+//        glRotated(-cy_rotate, 0, 1, 0);
+        glTranslated(-1.5, -3.99761/2.0, -3.922535);
 
         // Get in front of train
         double cameraPosition = trainPosition;
-        for (TrainPieceType * wagon : train) {
-            cameraPosition += wagon->len;
+        for (size_t i = 0; i < train.size() - currentWagon - 1; ++i) {
+            cameraPosition += train[i]->len;
         }
 
         // Get index position of current track piece

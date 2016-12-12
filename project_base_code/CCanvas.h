@@ -103,6 +103,7 @@ private:
     GLdouble cx_rotate = 90;
     GLdouble cy_rotate = 0;
     double trainSpeed = 0.2;
+    size_t currentWagon = 0;
 
     enum View currentView = Perspective;
 
