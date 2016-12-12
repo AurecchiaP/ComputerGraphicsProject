@@ -33,14 +33,16 @@ void CCanvas::mousePressEvent(QMouseEvent *event){
 /* keyboard events */
 
 void CCanvas::keyPressEvent( QKeyEvent * event ){
-    if( event->key() == Qt::Key_Alt ){
-        x_translate += 0.1;
-    }else if (event->key() == Qt::Key_Control){
-        x_translate -= 0.1;
-    }else if (event->key() == Qt::Key_Shift){
-        y_translate += 0.1;
-    }else if (event->key() == Qt::Key_Meta){
-        y_translate -= 0.1;
+    if( event->key() == Qt::Key_A ){
+        x_translate += 0.5;
+    }else if (event->key() == Qt::Key_D){
+        x_translate -= 0.5;
+    }else if (event->key() == Qt::Key_S){
+        y_translate += 0.5;
+    }else if (event->key() == Qt::Key_W){
+        y_translate -= 0.5;
+    }else if( event->key() == Qt::Key_K ){
+        x_translate += 0.5;
     }
 }
 /* end keyboard */
@@ -83,9 +85,6 @@ static TrainPieceType wagon("models/wagon_short.obj", 5.5);
 
 void CCanvas::initializeGL()
 {
-//    keyEnterReceiver* key = new keyEnterReceiver();
-//    this->installEventFilter(key);
-
     glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing

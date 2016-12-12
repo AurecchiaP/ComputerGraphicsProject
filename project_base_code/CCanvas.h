@@ -40,6 +40,7 @@ public:
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
         timer->start(10);
+        setFocusPolicy(Qt::StrongFocus);
     }
 
 
