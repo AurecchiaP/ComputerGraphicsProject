@@ -6,8 +6,6 @@
 
 #define MOUSE_SPEED 0.15
 
-#define MY_EPSILON 10e-9
-
 using namespace std;
 
 /****************/
@@ -400,8 +398,12 @@ void CCanvas::setView(View _view) {
 
         break;
     case Cockpit:
+        // Scaling to get correct transfrom distances
+        const double scaling = 0.2;
+
+        glScaled(scaling, scaling, scaling);
+
         // Revert position from in front of train
-        glScaled(0.2, 0.2, 0.2);
         glRotated(-90, 1, 0, 0);
         glRotated(-c_rotate, 0, 0, 1);
         glTranslated(-2, -3.99761/2.0, -3.922535);
@@ -414,9 +416,11 @@ void CCanvas::setView(View _view) {
 
         // Get index position of current track piece
         int i = 0;
+        size_t steps = 0;
         double tmp;
         for (tmp = cameraPosition; tmp >= track[i]->len; tmp -= track[i]->len) {
             i = (i + 1) % track.size();
+            ++steps;
         }
 
         // Reverse partial transformation
@@ -425,16 +429,16 @@ void CCanvas::setView(View _view) {
         cameraPosition -= tmp;
 
         // Reverse track transformations
-        while (cameraPosition >= MY_EPSILON) {
+        for (size_t j = 0; j < steps; ++j) {
             --i;
             if (i < 0) {
                 i = track.size() - 1;
             }
-            cameraPosition -= track[i]->len;
             track[i]->invertTransforms();
         }
 
-        glScaled(5, 5, 5);
+        // Revert the scaling
+        glScaled(1.0/scaling, 1.0/scaling, 1.0/scaling);
         break;
     }
 }
