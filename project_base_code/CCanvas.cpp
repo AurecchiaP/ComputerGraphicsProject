@@ -16,10 +16,13 @@ void CCanvas::mouseMoveEvent(QMouseEvent *event){
     int dy = (event->y() - pos.y());
 
     if(event->buttons() & Qt::LeftButton){
-        x_rotate += dy*MOUSE_SPEED;
-        y_rotate += dx*MOUSE_SPEED;
-        cx_rotate += dx*MOUSE_SPEED;
-        cy_rotate += dy*MOUSE_SPEED;
+        if (currentView == Perspective) {
+            x_rotate += dy*MOUSE_SPEED;
+            y_rotate += dx*MOUSE_SPEED;
+        } else {
+            cx_rotate += dx*MOUSE_SPEED;
+            cy_rotate += dy*MOUSE_SPEED;
+        }
     }
     pos = event->pos();
 }
