@@ -3,10 +3,49 @@
 #include "Sphere.h"
 #include "TrackPieceType.h"
 #include "TrainPieceType.h"
+#include "keyenterreceiver.h"
+
+#define MOUSE_SPEED 0.15
 
 #define TRAINSPEED 0.25
 
 using namespace std;
+
+/****************/
+/* mouse events*/
+/**************/
+void CCanvas::mouseMoveEvent(QMouseEvent *event){
+    int dx = (event->x() - pos.x());
+    int dy = (event->y() - pos.y());
+
+    if(event->buttons() & Qt::LeftButton){
+        x_rotate += dy*MOUSE_SPEED;
+        y_rotate += dx*MOUSE_SPEED;
+    }
+    pos = event->pos();
+}
+
+void CCanvas::mousePressEvent(QMouseEvent *event){
+    pos = event->pos();
+}
+/* end mouse events */
+
+/* keyboard events */
+
+void CCanvas::keyPressEvent( QKeyEvent * event ){
+    if( event->key() == Qt::Key_A ){
+        x_translate += 0.5;
+    }else if (event->key() == Qt::Key_D){
+        x_translate -= 0.5;
+    }else if (event->key() == Qt::Key_S){
+        y_translate += 0.5;
+    }else if (event->key() == Qt::Key_W){
+        y_translate -= 0.5;
+    }else if( event->key() == Qt::Key_K ){
+        x_translate += 0.5;
+    }
+}
+/* end keyboard */
 
 //-----------------------------------------------------------------------------
 // Track types
@@ -337,8 +376,10 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslated(5.5, -0.5, -15.0);
-        glRotated(-30, 1.0, 0.0, 0.0);
+        glTranslated(x_translate, y_translate, -15.0);
+        glRotated(x_rotate, 1.0, 0.0, 0.0);
+        glRotated(y_rotate, 0.0, 1.0, 0.0);
+
         break;
     case Cockpit:
         GLdouble m[16];
