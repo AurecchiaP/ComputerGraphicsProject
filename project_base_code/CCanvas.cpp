@@ -432,7 +432,7 @@ void CCanvas::setView(View _view) {
         // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
 //        glRotated(-cy_rotate, 0, 1, 0);
-        glTranslated(-1.5, -3.99761/2.0, -3.922535);
+        glTranslated(-1.5, -3.99761/2.0, -3.422535);
 
         // Get in front of train
         double cameraPosition = trainPosition;
