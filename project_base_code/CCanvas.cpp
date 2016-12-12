@@ -128,9 +128,6 @@ void CCanvas::initializeGL()
      * light in eye coordinates, and attenuation is enabled. The default position is (0,0,1,0); thus,
      * the default light source is directional, parallel to, and in the direction of the -z axis.
      */
-    GLfloat lightpos[] = {0.0, 0.0, 10.0, 1.0};
-    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-
 
     GLfloat lightAmb[]  = {0.3, 0.3, 0.3, 1.0};
     GLfloat lightDiff[] = {1.0, 1.0, 1.0, 1.0};
@@ -408,8 +405,8 @@ void CCanvas::setView(View _view) {
 
         glScaled(scaling, scaling, scaling);
 
-        // Revert position from in front of train
         glRotated(-90, 1, 0, 0);
+        // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
         glRotated(-cy_rotate, 0, 1, 0);
         glTranslated(-2, -3.99761/2.0, -3.922535);
@@ -455,14 +452,24 @@ void CCanvas::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Setup the current view
     setView(currentView);
 
-    // You can always change the light position here if you want
-    GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};
+    GLfloat lightpos[] = {-5.0, 5.0, 15.0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+//    glPushMatrix();
+//    glTranslated(lightpos[0], lightpos[1], lightpos[2]);
+//    glScaled(0.5, 0.5, 0.5);
+//    Sphere sphere;
+//    sphere.draw();
+//    glPopMatrix();
+
+    // You can always change the light position here if you want
+//    GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};
+//    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
     //    glBegin(GL_TRIANGLES);
     //        glColor3f(1.0, 1.0, 0.0);
