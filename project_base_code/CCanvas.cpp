@@ -18,6 +18,8 @@ void CCanvas::mouseMoveEvent(QMouseEvent *event){
     if(event->buttons() & Qt::LeftButton){
         x_rotate += dy*MOUSE_SPEED;
         y_rotate += dx*MOUSE_SPEED;
+        cx_rotate += dx*MOUSE_SPEED;
+        cy_rotate += dy*MOUSE_SPEED;
     }
     pos = event->pos();
 }
@@ -32,10 +34,8 @@ void CCanvas::mousePressEvent(QMouseEvent *event){
 void CCanvas::keyPressEvent( QKeyEvent * event ){
     if( event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
         x_translate += 0.5;
-        c_rotate += 1;
     } else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
         x_translate -= 0.5;
-        c_rotate -= 1;
     } else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
         y_translate += 0.5;
     } else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
@@ -46,6 +46,12 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
         trainSpeed -= 0.1;
     } else if (event->key() == Qt::Key_H){
         trainSpeed = 0.0;
+    } else if (event->key() == Qt::Key_Tab) {
+        if (currentView == Perspective) {
+            currentView = Cockpit;
+        } else {
+            currentView = Perspective;
+        }
     }
 }
 /* end keyboard */
@@ -257,10 +263,9 @@ void CCanvas::initializeGL()
     }
 
     // Create train, wagons pushed in inverse order
-
-//    for (int i = 0; i < 10; ++i) {
-//        train.push_back(&wagon);
-//    }
+    for (int i = 0; i < 9; ++i) {
+        train.push_back(&wagon);
+    }
     train.push_back(&locomotive);
 }
 
@@ -405,7 +410,8 @@ void CCanvas::setView(View _view) {
 
         // Revert position from in front of train
         glRotated(-90, 1, 0, 0);
-        glRotated(-c_rotate, 0, 0, 1);
+        glRotated(-cx_rotate, 0, 0, 1);
+        glRotated(-cy_rotate, 0, 1, 0);
         glTranslated(-2, -3.99761/2.0, -3.922535);
 
         // Get in front of train
@@ -422,11 +428,8 @@ void CCanvas::setView(View _view) {
             i = (i + 1) % track.size();
             ++steps;
         }
-
         // Reverse partial transformation
         track[i]->invertTransforms(tmp/track[i]->len);
-
-        cameraPosition -= tmp;
 
         // Reverse track transformations
         for (size_t j = 0; j < steps; ++j) {
@@ -455,7 +458,7 @@ void CCanvas::paintGL()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     // Setup the current view
-    setView(View::Cockpit);
+    setView(currentView);
 
     // You can always change the light position here if you want
     GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};

@@ -100,8 +100,11 @@ private:
     //key press events
     GLdouble x_translate = 5.5;
     GLdouble y_translate = -0.5;
-    GLdouble c_rotate = 90;
+    GLdouble cx_rotate = 90;
+    GLdouble cy_rotate = 0;
     double trainSpeed = 0.2;
+
+    enum View currentView = Perspective;
 
 
 };
