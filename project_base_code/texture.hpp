@@ -47,6 +47,9 @@ public:
 
         assert(img.width() > 0.0);
 
+        // adds light to texturised objects.
+        glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+
         img = QGLWidget::convertToGLFormat(img);
 
         glGenTextures(1, &name);
