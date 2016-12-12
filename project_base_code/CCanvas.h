@@ -100,6 +100,7 @@ private:
     //key press events
     GLdouble x_translate = 5.5;
     GLdouble y_translate = -0.5;
+    GLdouble c_rotate = 90;
 
 
 };

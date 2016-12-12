@@ -3,7 +3,6 @@
 #include "Sphere.h"
 #include "TrackPieceType.h"
 #include "TrainPieceType.h"
-#include "keyenterreceiver.h"
 
 #define MOUSE_SPEED 0.15
 
@@ -33,16 +32,16 @@ void CCanvas::mousePressEvent(QMouseEvent *event){
 /* keyboard events */
 
 void CCanvas::keyPressEvent( QKeyEvent * event ){
-    if( event->key() == Qt::Key_A ){
+    if( event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
         x_translate += 0.5;
-    }else if (event->key() == Qt::Key_D){
+        c_rotate += 1;
+    }else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
         x_translate -= 0.5;
-    }else if (event->key() == Qt::Key_S){
+        c_rotate -= 1;
+    }else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
         y_translate += 0.5;
-    }else if (event->key() == Qt::Key_W){
+    }else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
         y_translate -= 0.5;
-    }else if( event->key() == Qt::Key_K ){
-        x_translate += 0.5;
     }
 }
 /* end keyboard */
@@ -85,7 +84,7 @@ static TrainPieceType wagon("models/wagon_short.obj", 5.5);
 
 void CCanvas::initializeGL()
 {
-    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
+    glClearColor(1.0f, 1.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
@@ -399,8 +398,8 @@ void CCanvas::setView(View _view) {
 
         track[i]->applyTransforms(currentPosition / track[i]->len);
 
-        glTranslated(0, 3.99761/2.0, 3 + 0.922535);
-        glRotated(90, 0, 0, 1);
+        glTranslated(2, 3.99761/2.0, 3 + 0.922535);
+        glRotated(c_rotate, 0, 0, 1);
         glRotated(90, 1, 0, 0);
 
         glGetDoublev(GL_MODELVIEW, m);
