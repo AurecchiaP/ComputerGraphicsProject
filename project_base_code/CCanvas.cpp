@@ -504,23 +504,23 @@ void CCanvas::paintGL()
 
     /**** Axes in the global coordinate system ****/
 
-    glDisable(GL_LIGHTING);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-6.0f, 0.0f, 0.0f);
-    glVertex3f(6.0f, 0.0f, 0.0f);
-    glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, -6.0f, 0.0f);
-    glVertex3f(0.0f, 6.0f, 0.0f);
-    glEnd();
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, 0.0f, -6.0f);
-    glVertex3f(0.0f, 0.0f, 6.0f);
-    glEnd();
-    glEnable(GL_LIGHTING);
+//    glDisable(GL_LIGHTING);
+//    glColor3f(1.0f, 0.0f, 0.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(-6.0f, 0.0f, 0.0f);
+//    glVertex3f(6.0f, 0.0f, 0.0f);
+//    glEnd();
+//    glColor3f(0.0f, 1.0f, 0.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(0.0f, -6.0f, 0.0f);
+//    glVertex3f(0.0f, 6.0f, 0.0f);
+//    glEnd();
+//    glColor3f(0.0f, 0.0f, 1.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(0.0f, 0.0f, -6.0f);
+//    glVertex3f(0.0f, 0.0f, 6.0f);
+//    glEnd();
+//    glEnable(GL_LIGHTING);
 
     /**** Setup and draw your objects ****/
 
@@ -544,10 +544,11 @@ void CCanvas::paintGL()
     // floorboards
     textureFloorboards.bind();
     glBegin(GL_QUADS);
-      glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
-      glTexCoord2f(0.0, 0.0);    glVertex3f(-80.0f, -10.0f, -0.2f ); // bottom left
-      glTexCoord2f(8.0, 0.0);    glVertex3f(80.0f, 50.0f, -0.2f ); // top right
-      glTexCoord2f(8.0, 8.0);    glVertex3f(80.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-50.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(10.0, 10.0);    glVertex3f(50.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(10.0, 0.0);    glVertex3f(50.0f, 50.0f, -0.2f ); // top right
+      glTexCoord2f(0, 10.0);    glVertex3f(-50.0f, 50.0f, -0.2f); // top left
+
     glEnd();
     textureFloorboards.unbind();
     textureTracks.bind();
