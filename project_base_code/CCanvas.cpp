@@ -124,7 +124,7 @@ static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](dou
 // Train types
 static TrainPieceType locomotive("models/train.obj", 5.0);
 
-static TrainPieceType wagon("models/wagon_short.obj", 5.5);
+static TrainPieceType wagon("models/wagon_short.obj", 5.57);
 
 //-----------------------------------------------------------------------------
 
