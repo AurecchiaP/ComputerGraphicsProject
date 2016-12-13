@@ -434,9 +434,12 @@ void CCanvas::setView(View _view) {
         // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
 //        glRotated(-cy_rotate, 0, 1, 0);
-        const double height = (currentWagon == 0) ? -4.2 : -3.5;
-        const double depth = (currentWagon == 0) ? -1.65 : -1.4;
-        glTranslated(depth, -3.99761/2.0, height);
+
+        if (currentWagon == 0) {
+            glTranslated(-1.65, -3.99761/2.0 - 0.75, -4.2);
+        } else {
+            glTranslated(-1.4, -3.99761/2.0, -3.5);
+        }
 
         // Get in front of train
         double currentPosition = trainPosition;
