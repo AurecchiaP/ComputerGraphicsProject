@@ -82,41 +82,43 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
 //-----------------------------------------------------------------------------
 // Track types
 //length is the size of the straight piece
-static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double diff, bool inv) {
+static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double alpha, bool inv) {
     if (inv) {
-        glTranslated(13.22809 * diff, 0.0, 0.0);
+        glTranslated(13.22809 * alpha, 0.0, 0.0);
     } else {
-        glTranslated(-13.22809 * diff, 0.0, 0.0);
+        glTranslated(-13.22809 * alpha, 0.0, 0.0);
     }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double diff, bool inv) {
-    const double r = sqrt(9.11696*9.11696 + 5.13948*5.13948);
-    const double x = -r * sin(PI/3.0 * diff);
-    const double y = r * cos(PI/3.0 * diff) - r;
+static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double alpha, bool inv) {
+    // r = sqrt(9.11696*9.11696 + 5.13948*5.13948) = 10.4658116891;
+    constexpr double r = 10.4658116891;
+    const double x = -r * sin(PI/3.0 * alpha);
+    const double y = r * cos(PI/3.0 * alpha) - r;
 
     if (inv) {
-        glRotated(-60 * diff, 0, 0, 1);
+        glRotated(-60 * alpha, 0, 0, 1);
         glTranslated(-x, -y, 0.0);
     } else {
         glTranslated(x, y, 0.0);
-        glRotated(60 * diff, 0, 0, 1);
+        glRotated(60 * alpha, 0, 0, 1);
     }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double diff, bool inv) {
-    const double r = sqrt(12.5744*12.5744 + 7.13154*7.13154);
-    const double x = r * sin(-PI/3.0 * diff);
-    const double y = -r * cos(-PI/3.0 * diff) + r;
+static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double alpha, bool inv) {
+    // r = sqrt(12.5744*12.5744 + 7.13154*7.13154) = 14.4559468085
+    constexpr double r = 14.4559468085;
+    const double x = r * sin(-PI/3.0 * alpha);
+    const double y = -r * cos(-PI/3.0 * alpha) + r;
 
     if (inv) {
-        glRotated(60 * diff, 0, 0, 1);
+        glRotated(60 * alpha, 0, 0, 1);
         glTranslated(-x, -y, 0.0);
     } else {
         glTranslated(x, y, 0.0);
-        glRotated(-60 * diff, 0, 0, 1);
+        glRotated(-60 * alpha, 0, 0, 1);
     }
 });
 
@@ -124,7 +126,7 @@ static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](dou
 // Train types
 static TrainPieceType locomotive("models/train.obj", 5.0);
 
-static TrainPieceType wagon("models/wagon_short.obj", 5.5);
+static TrainPieceType wagon("models/wagon_short.obj", 5.57);
 
 //-----------------------------------------------------------------------------
 
@@ -432,7 +434,12 @@ void CCanvas::setView(View _view) {
         // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
 //        glRotated(-cy_rotate, 0, 1, 0);
-        glTranslated(-1.4, -3.99761/2.0, -3.5);
+
+        if (currentWagon == 0) {
+            glTranslated(-1.65, -3.99761/2.0 - 0.75, -4.2);
+        } else {
+            glTranslated(-1.4, -3.99761/2.0, -3.5);
+        }
 
         // Get in front of train
         double currentPosition = trainPosition;
@@ -504,23 +511,23 @@ void CCanvas::paintGL()
 
     /**** Axes in the global coordinate system ****/
 
-    glDisable(GL_LIGHTING);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-6.0f, 0.0f, 0.0f);
-    glVertex3f(6.0f, 0.0f, 0.0f);
-    glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, -6.0f, 0.0f);
-    glVertex3f(0.0f, 6.0f, 0.0f);
-    glEnd();
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, 0.0f, -6.0f);
-    glVertex3f(0.0f, 0.0f, 6.0f);
-    glEnd();
-    glEnable(GL_LIGHTING);
+//    glDisable(GL_LIGHTING);
+//    glColor3f(1.0f, 0.0f, 0.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(-6.0f, 0.0f, 0.0f);
+//    glVertex3f(6.0f, 0.0f, 0.0f);
+//    glEnd();
+//    glColor3f(0.0f, 1.0f, 0.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(0.0f, -6.0f, 0.0f);
+//    glVertex3f(0.0f, 6.0f, 0.0f);
+//    glEnd();
+//    glColor3f(0.0f, 0.0f, 1.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(0.0f, 0.0f, -6.0f);
+//    glVertex3f(0.0f, 0.0f, 6.0f);
+//    glEnd();
+//    glEnable(GL_LIGHTING);
 
     /**** Setup and draw your objects ****/
 
@@ -544,10 +551,11 @@ void CCanvas::paintGL()
     // floorboards
     textureFloorboards.bind();
     glBegin(GL_QUADS);
-      glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
-      glTexCoord2f(0.0, 0.0);    glVertex3f(-80.0f, -10.0f, -0.2f ); // bottom left
-      glTexCoord2f(8.0, 0.0);    glVertex3f(80.0f, 50.0f, -0.2f ); // top right
-      glTexCoord2f(8.0, 8.0);    glVertex3f(80.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-50.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(10.0, 10.0);    glVertex3f(50.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(10.0, 0.0);    glVertex3f(50.0f, 50.0f, -0.2f ); // top right
+      glTexCoord2f(0, 10.0);    glVertex3f(-50.0f, 50.0f, -0.2f); // top left
+
     glEnd();
     textureFloorboards.unbind();
     textureTracks.bind();
