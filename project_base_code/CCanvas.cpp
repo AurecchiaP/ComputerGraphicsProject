@@ -577,6 +577,14 @@ void CCanvas::paintGL()
           glTexCoord2f(4, 5);    glVertex3f(20.0f, 20.0f, 22.2f); // top left
 
         glEnd();
+
+        glBegin(GL_QUADS);
+          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+
+        glEnd();
         textureWalls.unbind();
 
         textureCeil.bind();
