@@ -82,41 +82,43 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
 //-----------------------------------------------------------------------------
 // Track types
 //length is the size of the straight piece
-static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double diff, bool inv) {
+static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double alpha, bool inv) {
     if (inv) {
-        glTranslated(13.22809 * diff, 0.0, 0.0);
+        glTranslated(13.22809 * alpha, 0.0, 0.0);
     } else {
-        glTranslated(-13.22809 * diff, 0.0, 0.0);
+        glTranslated(-13.22809 * alpha, 0.0, 0.0);
     }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double diff, bool inv) {
-    const double r = sqrt(9.11696*9.11696 + 5.13948*5.13948);
-    const double x = -r * sin(PI/3.0 * diff);
-    const double y = r * cos(PI/3.0 * diff) - r;
+static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double alpha, bool inv) {
+    // r = sqrt(9.11696*9.11696 + 5.13948*5.13948) = 10.4658116891;
+    constexpr double r = 10.4658116891;
+    const double x = -r * sin(PI/3.0 * alpha);
+    const double y = r * cos(PI/3.0 * alpha) - r;
 
     if (inv) {
-        glRotated(-60 * diff, 0, 0, 1);
+        glRotated(-60 * alpha, 0, 0, 1);
         glTranslated(-x, -y, 0.0);
     } else {
         glTranslated(x, y, 0.0);
-        glRotated(60 * diff, 0, 0, 1);
+        glRotated(60 * alpha, 0, 0, 1);
     }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double diff, bool inv) {
-    const double r = sqrt(12.5744*12.5744 + 7.13154*7.13154);
-    const double x = r * sin(-PI/3.0 * diff);
-    const double y = -r * cos(-PI/3.0 * diff) + r;
+static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double alpha, bool inv) {
+    // r = sqrt(12.5744*12.5744 + 7.13154*7.13154) = 14.4559468085
+    constexpr double r = 14.4559468085;
+    const double x = r * sin(-PI/3.0 * alpha);
+    const double y = -r * cos(-PI/3.0 * alpha) + r;
 
     if (inv) {
-        glRotated(60 * diff, 0, 0, 1);
+        glRotated(60 * alpha, 0, 0, 1);
         glTranslated(-x, -y, 0.0);
     } else {
         glTranslated(x, y, 0.0);
-        glRotated(-60 * diff, 0, 0, 1);
+        glRotated(-60 * alpha, 0, 0, 1);
     }
 });
 
@@ -432,7 +434,9 @@ void CCanvas::setView(View _view) {
         // Revert position from in front of train to track level
         glRotated(-cx_rotate, 0, 0, 1);
 //        glRotated(-cy_rotate, 0, 1, 0);
-        glTranslated(-1.4, -3.99761/2.0, -3.5);
+        const double height = (currentWagon == 0) ? -4.2 : -3.5;
+        const double depth = (currentWagon == 0) ? -1.65 : -1.4;
+        glTranslated(depth, -3.99761/2.0, height);
 
         // Get in front of train
         double currentPosition = trainPosition;
