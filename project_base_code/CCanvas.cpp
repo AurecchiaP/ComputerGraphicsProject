@@ -436,7 +436,7 @@ void CCanvas::setView(View _view) {
 //        glRotated(-cy_rotate, 0, 1, 0);
 
         if (currentWagon == 0) {
-            glTranslated(-1.65, -3.99761/2.0 - 0.75, -4.2);
+            glTranslated(-1.6, -3.99761/2.0 - 0.65, -4.0);
         } else {
             glTranslated(-1.4, -3.99761/2.0, -3.5);
         }
