@@ -30,7 +30,7 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        textureTrain("textures/woodRed.jpg"),
+        textureTrain("textures/woodTrain.jpg"),
         textureFloor("textures/carpet2.jpg"),
         textureFloorboards("textures/floor.jpg"),
         textureWalls("textures/wallpaper.jpg"),
