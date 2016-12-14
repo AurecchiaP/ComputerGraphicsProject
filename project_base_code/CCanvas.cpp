@@ -568,6 +568,7 @@ void CCanvas::paintGL()
      *  glGetFloatv (GL_MODELVIEW_MATRIX, matrix);
     */
 
+    Sphere sphere(20, 10);
     // Draw track
     glScalef(0.2f, 0.2f, 0.2f);
 
@@ -607,7 +608,8 @@ void CCanvas::paintGL()
     // Draw train
     size_t i = 0;
     double currentPosition = trainPosition;
-    for(TrainPieceType * piece : train) {
+    for(int j = 0; j < train.size(); j++) {
+        TrainPieceType * piece = train[j];
         while (currentPosition >= track[i]->len) {
             currentPosition -= track[i]->len;
             track[i]->applyTransforms();
@@ -626,7 +628,21 @@ void CCanvas::paintGL()
         piece->draw();
         textureTrain.unbind();
 
-        glPopMatrix();
+        if( j != train.size()-1){
+            glPushMatrix();
+            glTranslated(0, 2, 0);
+            glScaled(0.2, 0.2, 0.2);
+            sphere.draw();
+            glPopMatrix();
+            glPopMatrix();
+        }else{
+            glPushMatrix();
+            glTranslated(1, 3, -1.4);
+            glScaled(0.2, 0.2, 0.2);
+            sphere.draw();
+            glPopMatrix();
+            glPopMatrix();
+        }
 
         currentPosition += piece->len;
         while (currentPosition >= trackLength){
