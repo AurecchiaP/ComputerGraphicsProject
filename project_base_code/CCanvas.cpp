@@ -170,7 +170,8 @@ void CCanvas::initializeGL()
     textureFloor.setTexture();
     textureFloorboards.setTexture();
     textureTrain.setTexture();
-
+    textureWalls.setTexture();
+    textureCeil.setTexture();
     // Initialize models for all types
     straight.init();
     left60.init();
@@ -551,13 +552,56 @@ void CCanvas::paintGL()
     // floorboards
     textureFloorboards.bind();
     glBegin(GL_QUADS);
-      glTexCoord2f(0.0, 0.0);    glVertex3f(-50.0f, -10.0f, -0.2f ); // bottom left
-      glTexCoord2f(10.0, 10.0);    glVertex3f(50.0f, -10.0f, -0.2f ); // bottom right
-      glTexCoord2f(10.0, 0.0);    glVertex3f(50.0f, 50.0f, -0.2f ); // top right
-      glTexCoord2f(0, 10.0);    glVertex3f(-50.0f, 50.0f, -0.2f); // top left
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(4.0, 4.0);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(4.0, 0.0);    glVertex3f(20.0f, 20.0f, -0.2f ); // top right
+      glTexCoord2f(0, 4.0);    glVertex3f(-30.0f, 20.0f, -0.2f); // top left
 
     glEnd();
     textureFloorboards.unbind();
+
+    // walls
+        textureWalls.bind();
+        glBegin(GL_QUADS);
+          glTexCoord2f(4, 4);    glVertex3f(-30.0f, 20.0f, -0.2f ); // bottom left
+          glTexCoord2f(5, 4);    glVertex3f(20.0f, 20.0f, -0.2f ); // bottom right
+          glTexCoord2f(5, 5);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
+          glTexCoord2f(4, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
+        glEnd();
+
+        glBegin(GL_QUADS);
+          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+          glTexCoord2f(5, 4);    glVertex3f(-30.0f, 20.0f, -0.2f); // bottom right
+          glTexCoord2f(5, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top right
+          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+
+        glEnd();
+
+        glBegin(GL_QUADS);
+          glTexCoord2f(4, 4);    glVertex3f(20.0f, 20.0f, -0.2f); // bottom left
+          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+          glTexCoord2f(4, 5);    glVertex3f(20.0f, 20.0f, 22.2f); // top left
+
+        glEnd();
+
+        glBegin(GL_QUADS);
+          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+
+        glEnd();
+        textureWalls.unbind();
+
+        textureCeil.bind();
+        glBegin(GL_QUADS);
+          glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, 22.2f ); // bottom left
+          glTexCoord2f(1.0, 1.0);    glVertex3f(20.0f, -10.0f, 22.2f ); // bottom right
+          glTexCoord2f(1.0, 0.0);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
+          glTexCoord2f(0, 1.0);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
+        glEnd();
+        textureCeil.unbind();
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
@@ -589,7 +633,7 @@ void CCanvas::paintGL()
     glTranslatef(0,45,0);
     floor.draw();
     textureFloor.unbind();
-    for(int i = 0 ; i < 4; ++i){
+    for(int i = 0 ; i < 3; ++i){
         textureFloor.bind();
 
         glTranslatef(45.0,0,0);
