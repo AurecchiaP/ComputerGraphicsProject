@@ -635,14 +635,14 @@ void CCanvas::paintGL()
               glTexCoord2f(4, 5);    glVertex3f(19.0f, 19.0f, 2.2f); // top left
 
             glEnd();
-
-    //        glBegin(GL_QUADS);
-    //          glTexCoord2f(4, 4);    glVertex3f(-29.0f, -9.0f, -0.2f); // bottom left
-    //          glTexCoord2f(5, 4);    glVertex3f(19.0f, -9.0f, -0.2f ); // bottom right
-    //          glTexCoord2f(5, 5);    glVertex3f(19.0f, -9.0f, 2.2f); // top right
-    //          glTexCoord2f(4, 5);    glVertex3f(-29.0f, -9.0f, 2.2f); // top left
-
-    //        glEnd();
+            if (currentView == Cockpit) {
+                glBegin(GL_QUADS);
+                glTexCoord2f(4, 4);    glVertex3f(-29.0f, -9.0f, -0.2f); // bottom left
+                glTexCoord2f(5, 4);    glVertex3f(19.0f, -9.0f, -0.2f ); // bottom right
+                glTexCoord2f(5, 5);    glVertex3f(19.0f, -9.0f, 2.2f); // top right
+                glTexCoord2f(4, 5);    glVertex3f(-29.0f, -9.0f, 2.2f); // top left
+                glEnd();
+            }
             texbaseboard.unbind();
 
         textureCeil.bind();
