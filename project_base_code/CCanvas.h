@@ -78,7 +78,8 @@ private:
 
     enum View {
         Perspective = 0,    // View the scene from a perspective (from above, from a side, or whatever)
-        Cockpit             // View the scene from the train cockpit (if you want, or whatever other view)
+        Cockpit,             // View the scene from the train cockpit (if you want, or whatever other view)
+        Teddy
     };
 
     void setView(View _view);
@@ -117,6 +118,8 @@ private:
     GLdouble z_translate = -15;
     GLdouble cx_rotate = 90;
     GLdouble cy_rotate = 0;
+    GLdouble tx_rotate = -60;
+    GLdouble tz_rotate = 180;
     double trainSpeed = 0.2;
     size_t currentWagon = 0;
 

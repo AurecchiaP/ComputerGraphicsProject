@@ -15,13 +15,16 @@ void CCanvas::mouseMoveEvent(QMouseEvent *event){
     int dx = (event->x() - pos.x());
     int dy = (event->y() - pos.y());
 
-    if(event->buttons() & Qt::LeftButton){
+    if (event->buttons() & Qt::LeftButton){
         if (currentView == Perspective) {
             x_rotate += dy*MOUSE_SPEED;
             y_rotate += dx*MOUSE_SPEED;
-        } else {
+        } else if (currentView == Cockpit) {
             cx_rotate += dx*MOUSE_SPEED;
             cy_rotate += dy*MOUSE_SPEED;
+        } else {
+            tz_rotate += dx*MOUSE_SPEED;
+            tx_rotate += dy*MOUSE_SPEED;
         }
     }
     pos = event->pos();
@@ -59,6 +62,13 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
         } else {
             currentView = Perspective;
         }
+    } else if (event->key() == Qt::Key_T) {
+        if (currentView == Teddy) {
+            currentView = Perspective;
+        } else {
+            currentView = Teddy;
+        }
+        currentView = Teddy;
     } else if (event->key() == Qt::Key_0) {
         currentWagon = 0;
     } else if (event->key() == Qt::Key_1) {
@@ -79,6 +89,16 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
         currentWagon = 8;
     } else if (event->key() == Qt::Key_9) {
         currentWagon = 9;
+    } else if (event->key() == Qt::Key_R) {
+        x_translate = 5.5;
+        y_translate = 7.5;
+        z_translate = -15;
+        cx_rotate = 90;
+        cy_rotate = 0;
+        x_rotate = -30;
+        y_rotate = 0;
+        tx_rotate = -60;
+        tz_rotate = 180;
     }
 }
 /* end keyboard */
@@ -435,7 +455,11 @@ void CCanvas::setView(View _view) {
         glRotated(x_rotate, 1.0, 0.0, 0.0);
         glRotated(y_rotate, 0.0, 0.0, 1.0);
         glTranslated(x_translate, y_translate, z_translate);
-
+        break;
+    case Teddy:
+        glRotatef(tx_rotate, 1, 0, 0 );
+        glRotatef(tz_rotate, 0, 0, 1 );
+        glTranslatef(5.05f,-4.5f,-2.3f);
         break;
     case Cockpit:
         // Scaling to get correct transfrom distances
@@ -606,15 +630,12 @@ void CCanvas::paintGL()
 
         glEnd();
 
-        if (currentView == Cockpit) {
-            glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
-              glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
-
-            glEnd();
-        }
+        glBegin(GL_QUADS);
+          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+        glEnd();
         textureWalls.unbind();
 
 
@@ -642,14 +663,12 @@ void CCanvas::paintGL()
               glTexCoord2f(4, 5);    glVertex3f(19.0f, 19.0f, 2.2f); // top left
 
             glEnd();
-            if (currentView == Cockpit) {
-                glBegin(GL_QUADS);
+            glBegin(GL_QUADS);
                 glTexCoord2f(4, 4);    glVertex3f(-29.0f, -9.0f, -0.2f); // bottom left
                 glTexCoord2f(5, 4);    glVertex3f(19.0f, -9.0f, -0.2f ); // bottom right
                 glTexCoord2f(5, 5);    glVertex3f(19.0f, -9.0f, 2.2f); // top right
                 glTexCoord2f(4, 5);    glVertex3f(-29.0f, -9.0f, 2.2f); // top left
-                glEnd();
-            }
+            glEnd();
             texbaseboard.unbind();
 
         textureCeil.bind();
