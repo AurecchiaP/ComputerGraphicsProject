@@ -745,13 +745,14 @@ void CCanvas::paintGL()
 
         glPushMatrix();
         if( j != train.size()-1){
-            glTranslated(0, 2, 0);
-            glRotated(180, 0, 1, 0);
-            glScaled(0.7, 0.7, 0.7);
+            glTranslated(0, 1.8, 1);
+            glRotated(90, 0, 1, 0);
+            glScaled(2, 2, 2);
         }else{
-            glTranslated(0.4, 2.5, -1.5);
+            glTranslated(0.3, 2.5, -1.5);
             glRotated(20, 0, 1, 0);
-            glScaled(1, 1.5, 1);
+            glRotated(-30, 0, 0, 1);
+            glScaled(1.3, 1.8, 1.3);
         }
         texturePenguin.bind();
         penguin.draw();
