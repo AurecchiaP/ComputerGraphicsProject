@@ -33,6 +33,8 @@ public:
         textureTrain("textures/woodTrain.jpg"),
         textureFloor("textures/carpet2.jpg"),
         textureFloorboards("textures/floor.jpg"),
+        textureWalls("textures/wallpaper.jpg"),
+        textureCeil("textures/ceiling.jpg"),
         floor("models/floor.obj"),
         track(),
         train()
@@ -82,6 +84,8 @@ private:
     // Model loaded from .obj format
     Texture textureFloor;
     Texture textureFloorboards;
+    Texture textureWalls;
+    Texture textureCeil;
     ObjModel floor;
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
