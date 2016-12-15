@@ -178,6 +178,8 @@ void CCanvas::initializeGL()
     textureCeil.setTexture();
     texbaseboard.setTexture();
     texturePenguin.setTexture();
+    textureTeddy.setTexture();
+
     // Initialize models for all types
     straight.init();
     left60.init();
@@ -189,6 +191,9 @@ void CCanvas::initializeGL()
     // initialise floor
     floor.init();
     penguin.init();
+
+    // initialise teddy
+    teddy.init();
 
     // Create the track
     track.push_back(&straight);
@@ -655,6 +660,19 @@ void CCanvas::paintGL()
           glTexCoord2f(0, 1.0);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
         glEnd();
         textureCeil.unbind();
+
+        // draw teddy
+        glPushMatrix();
+        glTranslatef(-5.0f,4.5f,0.0f);
+        glRotatef(90, 0, 0, 1 );
+        glRotatef(90, 1, 0, 0 );
+        glScalef(2.5,2.5,2.5);
+        textureTeddy.bind();
+        teddy.draw();
+        textureTeddy.unbind();
+        glPopMatrix();
+
+
     textureTracks.bind();
     // You can stack new transformation matrix if you don't want
     // the previous transformations to apply on this object
@@ -705,7 +723,7 @@ void CCanvas::paintGL()
     // Draw train
     size_t i = 0;
     double currentPosition = trainPosition;
-    for(int j = 0; j < train.size(); j++) {
+    for(size_t j = 0; j < train.size(); j++) {
         TrainPieceType * piece = train[j];
         while (currentPosition >= track[i]->len) {
             currentPosition -= track[i]->len;

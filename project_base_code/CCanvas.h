@@ -37,8 +37,10 @@ public:
         textureWalls("textures/wallpaper.jpg"),
         textureCeil("textures/ceiling.jpg"),
         texbaseboard("textures/baseboard.png"),
+        textureTeddy("textures/bear2.jpg"),
         floor("models/floor.obj"),
         penguin("models/penguin.obj"),
+        teddy("models/bear.obj"),
         track(),
         train()
     {
@@ -91,7 +93,9 @@ private:
     Texture textureCeil;
     Texture texbaseboard;
     Texture texturePenguin;
+    Texture textureTeddy;
     ObjModel floor;
+    ObjModel teddy;
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
     ObjModel penguin;
