@@ -553,6 +553,16 @@ void CCanvas::paintGL()
     */
 
     // Drawing the object with texture
+    //carpet
+    textureFloor.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-20.0f, -6.0f, 0.0f ); // bottom left
+      glTexCoord2f(4.0, 0.0);    glVertex3f(10.0f, -6.0f, 0.0f ); // bottom right
+      glTexCoord2f(0.0, 4.0);    glVertex3f(10.0f, 14.0f, 0.0f ); // top right
+      glTexCoord2f(4.0, 4.0);    glVertex3f(-20.0f, 14.0f, 0.0f); // top left
+    glEnd();
+    textureFloor.unbind();
+
     // floorboards
     textureFloorboards.bind();
     glBegin(GL_QUADS);
@@ -560,7 +570,6 @@ void CCanvas::paintGL()
       glTexCoord2f(4.0, 4.0);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
       glTexCoord2f(4.0, 0.0);    glVertex3f(20.0f, 20.0f, -0.2f ); // top right
       glTexCoord2f(0, 4.0);    glVertex3f(-30.0f, 20.0f, -0.2f); // top left
-
     glEnd();
     textureFloorboards.unbind();
 
@@ -589,13 +598,13 @@ void CCanvas::paintGL()
 
         glEnd();
 
-        glBegin(GL_QUADS);
-          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
-          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
-          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
-          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+//        glBegin(GL_QUADS);
+//          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+//          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+//          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+//          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
 
-        glEnd();
+//        glEnd();
         textureWalls.unbind();
 
         textureCeil.bind();
@@ -628,29 +637,29 @@ void CCanvas::paintGL()
     textureTracks.unbind();
 
 
-    // scaled floor texture
-    textureFloor.bind();
-    glPushMatrix();
-    glTranslatef(-85.0,-1.5f,0);
-    floor.draw();
-    glTranslatef(0,45,0);
-    floor.draw();
-    textureFloor.unbind();
-    for(int i = 0 ; i < 3; ++i){
-        textureFloor.bind();
+//    // scaled floor texture
+//    textureFloor.bind();
+//    glPushMatrix();
+//    glTranslatef(-85.0,-1.5f,0);
+//    floor.draw();
+//    glTranslatef(0,45,0);
+//    floor.draw();
+//    textureFloor.unbind();
+//    for(int i = 0 ; i < 3; ++i){
+//        textureFloor.bind();
 
-        glTranslatef(45.0,0,0);
-        floor.draw();
-        if(i%2==0){
-            glTranslatef(0,-45,0);
-            floor.draw();
-        }else{
-            glTranslatef(0,45,0);
-            floor.draw();
-        }
-        textureFloor.unbind();
-    }
-    glPopMatrix();
+//        glTranslatef(45.0,0,0);
+//        floor.draw();
+//        if(i%2==0){
+//            glTranslatef(0,-45,0);
+//            floor.draw();
+//        }else{
+//            glTranslatef(0,45,0);
+//            floor.draw();
+//        }
+//        textureFloor.unbind();
+//    }
+//    glPopMatrix();
 
     // Draw train
     size_t i = 0;
