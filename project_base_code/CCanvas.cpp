@@ -173,21 +173,9 @@ void CCanvas::initializeGL()
     textureTracks.setTexture();
     textureFloor.setTexture();
     textureFloorboards.setTexture();
+    textureTrain.setTexture();
     textureWalls.setTexture();
     textureCeil.setTexture();
-
-    // Load train textures
-    trainTextures.emplace_back("textures/woodRed.jpg");
-    trainTextures.emplace_back("textures/woodBlue.jpg");
-    trainTextures.emplace_back("textures/woodGreen.jpg");
-    trainTextures.emplace_back("textures/woodPurple.jpg");
-    trainTextures.emplace_back("textures/woodYellow.jpg");
-
-    for (Texture & tex : trainTextures) {
-        tex.setTexture();
-    }
-
-
     // Initialize models for all types
     straight.init();
     left60.init();
@@ -301,13 +289,11 @@ void CCanvas::initializeGL()
         trackLength += piece->len;
     }
 
-    srand(time(0));
     // Create train, wagons pushed in inverse order
     for (int i = 0; i < 9; ++i) {
-        train.emplace_back(&wagon, &trainTextures[rand() % trainTextures.size()]);
+        train.push_back(&wagon);
     }
-    train.emplace_back(&locomotive, &trainTextures[rand() % trainTextures.size()]);
-
+    train.push_back(&locomotive);
 }
 
 //-----------------------------------------------------------------------------
@@ -463,7 +449,7 @@ void CCanvas::setView(View _view) {
         // Get in front of train
         double currentPosition = trainPosition;
         for (size_t j = 0; j < train.size() - currentWagon - 1; ++j) {
-            currentPosition += train[j].first->len;
+            currentPosition += train[j]->len;
         }
 
         // Get index position of current track piece, and number of track pieces to cover
@@ -680,7 +666,7 @@ void CCanvas::paintGL()
     // Draw train
     size_t i = 0;
     double currentPosition = trainPosition;
-    for(auto piece : train) {
+    for(TrainPieceType * piece : train) {
         while (currentPosition >= track[i]->len) {
             currentPosition -= track[i]->len;
             track[i]->applyTransforms();
@@ -695,13 +681,13 @@ void CCanvas::paintGL()
         glRotated(90, 1, 0, 0);
         glScaled(1.1, 1.1, 1.1);
 
-        piece.second->bind();
-        piece.first->draw();
-        piece.second->unbind();
+        textureTrain.bind();
+        piece->draw();
+        textureTrain.unbind();
 
         glPopMatrix();
 
-        currentPosition += piece.first->len;
+        currentPosition += piece->len;
         while (currentPosition >= trackLength){
             currentPosition -= trackLength;
         }
