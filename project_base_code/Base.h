@@ -17,9 +17,6 @@ Comment: This file contains all basic definitions.
 #include <cmath>
 #include <queue>
 #include <set>
-#include <utility>
-#include <ctime>
-#include <cstdlib>
 
 // Local includes.
 #include "Point3.h"
