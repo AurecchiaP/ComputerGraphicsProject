@@ -176,6 +176,7 @@ void CCanvas::initializeGL()
     textureTrain.setTexture();
     textureWalls.setTexture();
     textureCeil.setTexture();
+    texbaseboard.setTexture();
     // Initialize models for all types
     straight.init();
     left60.init();
@@ -494,7 +495,7 @@ void CCanvas::paintGL()
     // Setup the current view
     setView(currentView);
 
-    GLfloat lightpos[] = {-5.0, 5.0, 15.0, 1.0};
+    GLfloat lightpos[] = {-5.0, 5.0, 15.0, 0.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 //    glPushMatrix();
 //    glTranslated(lightpos[0], lightpos[1], lightpos[2]);
@@ -556,10 +557,10 @@ void CCanvas::paintGL()
     //carpet
     textureFloor.bind();
     glBegin(GL_QUADS);
-      glTexCoord2f(0.0, 0.0);    glVertex3f(-20.0f, -6.0f, 0.0f ); // bottom left
-      glTexCoord2f(4.0, 0.0);    glVertex3f(10.0f, -6.0f, 0.0f ); // bottom right
+      glTexCoord2f(4.0, 4.0);    glVertex3f(-20.0f, -6.0f, 0.0f ); // bottom left
+      glTexCoord2f(0.0, 0.0);    glVertex3f(10.0f, -6.0f, 0.0f ); // bottom right
       glTexCoord2f(0.0, 4.0);    glVertex3f(10.0f, 14.0f, 0.0f ); // top right
-      glTexCoord2f(4.0, 4.0);    glVertex3f(-20.0f, 14.0f, 0.0f); // top left
+      glTexCoord2f(4.0, 0.0);    glVertex3f(-20.0f, 14.0f, 0.0f); // top left
     glEnd();
     textureFloor.unbind();
 
@@ -567,9 +568,9 @@ void CCanvas::paintGL()
     textureFloorboards.bind();
     glBegin(GL_QUADS);
       glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, -0.2f ); // bottom left
-      glTexCoord2f(4.0, 4.0);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
-      glTexCoord2f(4.0, 0.0);    glVertex3f(20.0f, 20.0f, -0.2f ); // top right
-      glTexCoord2f(0, 4.0);    glVertex3f(-30.0f, 20.0f, -0.2f); // top left
+      glTexCoord2f(0.0, 4.0);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(4.0, 4.0);    glVertex3f(20.0f, 20.0f, -0.2f ); // top right
+      glTexCoord2f(4, 0.0);    glVertex3f(-30.0f, 20.0f, -0.2f); // top left
     glEnd();
     textureFloorboards.unbind();
 
@@ -608,6 +609,41 @@ void CCanvas::paintGL()
             glEnd();
         }
         textureWalls.unbind();
+
+
+        // baseboard
+            texbaseboard.bind();
+            glBegin(GL_QUADS);
+              glTexCoord2f(4, 4);    glVertex3f(-29.0f, 19.0f, -0.2f ); // bottom left
+              glTexCoord2f(5, 4);    glVertex3f(19.0f, 19.0f, -0.2f ); // bottom right
+              glTexCoord2f(5, 5);    glVertex3f(19.0f, 19.0f, 2.2f ); // top right
+              glTexCoord2f(4, 5);    glVertex3f(-29.0f, 19.0f, 2.2f); // top left
+            glEnd();
+
+            glBegin(GL_QUADS);
+              glTexCoord2f(4, 4);    glVertex3f(-29.0f, -10.0f, -0.2f); // bottom left
+              glTexCoord2f(5, 4);    glVertex3f(-29.0f, 19.0f, -0.2f); // bottom right
+              glTexCoord2f(5, 5);    glVertex3f(-29.0f, 19.0f, 2.2f); // top right
+              glTexCoord2f(4, 5);    glVertex3f(-29.0f, -10.0f, 2.2f); // top left
+
+            glEnd();
+
+            glBegin(GL_QUADS);
+              glTexCoord2f(4, 4);    glVertex3f(19.0f, 19.0f, -0.2f); // bottom left
+              glTexCoord2f(5, 4);    glVertex3f(19.0f, -10.0f, -0.2f ); // bottom right
+              glTexCoord2f(5, 5);    glVertex3f(19.0f, -10.0f, 2.2f); // top right
+              glTexCoord2f(4, 5);    glVertex3f(19.0f, 19.0f, 2.2f); // top left
+
+            glEnd();
+
+    //        glBegin(GL_QUADS);
+    //          glTexCoord2f(4, 4);    glVertex3f(-29.0f, -9.0f, -0.2f); // bottom left
+    //          glTexCoord2f(5, 4);    glVertex3f(19.0f, -9.0f, -0.2f ); // bottom right
+    //          glTexCoord2f(5, 5);    glVertex3f(19.0f, -9.0f, 2.2f); // top right
+    //          glTexCoord2f(4, 5);    glVertex3f(-29.0f, -9.0f, 2.2f); // top left
+
+    //        glEnd();
+            texbaseboard.unbind();
 
         textureCeil.bind();
         glBegin(GL_QUADS);
