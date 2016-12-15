@@ -148,9 +148,6 @@ void CCanvas::initializeGL()
     glEnable(GL_LIGHTING);
 
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
-    glEnable(GL_LIGHT2);
-    glEnable(GL_LIGHT3);
     /*
      * The position is transformed by the modelview matrix when glLightfv is called (just as if it were
      * a point), and it is stored in eye coordinates. If the w component of the position is 0.0,
@@ -169,18 +166,6 @@ void CCanvas::initializeGL()
     glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmb);
     glLightfv(GL_LIGHT0, GL_DIFFUSE,  lightDiff);
 
-    glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpec);
-    glLightfv(GL_LIGHT1, GL_AMBIENT,  lightAmb);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE,  lightDiff);
-
-    glLightfv(GL_LIGHT2, GL_SPECULAR, lightSpec);
-    glLightfv(GL_LIGHT2, GL_AMBIENT,  lightAmb);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE,  lightDiff);
-
-    glLightfv(GL_LIGHT2, GL_SPECULAR, lightSpec);
-    glLightfv(GL_LIGHT2, GL_AMBIENT,  lightAmb);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE,  lightDiff);
-
     /*
      * Before you can use the texture you need to initialize it by calling the setTexture() method.
      * Before you can use OBJ/PLY model, you need to initialize it by calling init() method.
@@ -192,6 +177,7 @@ void CCanvas::initializeGL()
     textureWalls.setTexture();
     textureCeil.setTexture();
     texbaseboard.setTexture();
+    texturePenguin.setTexture();
     // Initialize models for all types
     straight.init();
     left60.init();
@@ -202,6 +188,7 @@ void CCanvas::initializeGL()
 
     // initialise floor
     floor.init();
+    penguin.init();
 
     // Create the track
     track.push_back(&straight);
@@ -506,26 +493,12 @@ void CCanvas::paintGL()
 
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    Sphere sphere(20, 10);
     // Setup the current view
     setView(currentView);
 
     GLfloat lightpos[] = {-5.0, 5.0, 15.0, 0.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-    lightpos[0] = 15.0;
-    lightpos[1] = -15.0;
-    lightpos[2] = -15.0;
-    sphere.draw();
-     glLightfv(GL_LIGHT1, GL_POSITION, lightpos);
-     lightpos[0] = -15.0;
-     lightpos[1] = -55.0;
-     lightpos[2] = -55.0;
-     sphere.draw();
-      glLightfv(GL_LIGHT2, GL_POSITION, lightpos);
-      lightpos[0] = 15.0;
-      lightpos[1] = -15.0;
-      lightpos[2] = 15.0;
-       glLightfv(GL_LIGHT3, GL_POSITION, lightpos);
+
 //    glPushMatrix();
 //    glTranslated(lightpos[0], lightpos[1], lightpos[2]);
 //    glScaled(0.5, 0.5, 0.5);
@@ -752,22 +725,23 @@ void CCanvas::paintGL()
         piece->draw();
         textureTrain.unbind();
 
+        glPushMatrix();
         if( j != train.size()-1){
-            glPushMatrix();
             glTranslated(0, 2, 0);
-            glScaled(0.2, 0.2, 0.2);
-            sphere.draw();
-            glPopMatrix();
-            glPopMatrix();
+            glRotated(180, 0, 1, 0);
+            glScaled(0.7, 0.7, 0.7);
         }else{
-            glPushMatrix();
-            glTranslated(1, 3, -1.4);
-            glScaled(0.2, 0.2, 0.2);
-            sphere.draw();
-            glPopMatrix();
-            glPopMatrix();
+            glTranslated(0.4, 2.5, -1.5);
+            glRotated(20, 0, 1, 0);
+            glScaled(1, 1.5, 1);
         }
+        texturePenguin.bind();
+        penguin.draw();
+        texturePenguin.unbind();
+        glPopMatrix();
 
+        //this pop referes to the the push of tracks
+        glPopMatrix();
         currentPosition += piece->len;
         while (currentPosition >= trackLength){
             currentPosition -= trackLength;

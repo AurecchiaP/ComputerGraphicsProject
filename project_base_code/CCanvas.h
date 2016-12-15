@@ -31,14 +31,14 @@ public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
         textureTrain("textures/woodTrain.jpg"),
-
-        textureFloor("textures/carpet.jpg"),
+        textureFloor("textures/darkCarpet.jpg"),
+        texturePenguin("textures/penguin.jpg"),
         textureFloorboards("textures/floor2.jpg"),
         textureWalls("textures/wallpaper.jpg"),
-
         textureCeil("textures/ceiling.jpg"),
         texbaseboard("textures/baseboard.png"),
         floor("models/floor.obj"),
+        penguin("models/penguin.obj"),
         track(),
         train()
     {
@@ -90,9 +90,11 @@ private:
     Texture textureWalls;
     Texture textureCeil;
     Texture texbaseboard;
+    Texture texturePenguin;
     ObjModel floor;
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
+    ObjModel penguin;
 
     std::vector<TrackPieceType *> track;
     std::vector<TrainPieceType *> train;
