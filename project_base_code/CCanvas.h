@@ -30,14 +30,14 @@ class CCanvas : public QGLWidget
 public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
-        textureTrain("textures/woodTrain.jpg"),
         textureFloor("textures/carpet2.jpg"),
         textureFloorboards("textures/floor.jpg"),
         textureWalls("textures/wallpaper.jpg"),
         textureCeil("textures/ceiling.jpg"),
         floor("models/floor.obj"),
         track(),
-        train()
+        train(),
+        trainTextures()
     {
         QTimer *timer = new QTimer(this);
         connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -80,7 +80,6 @@ private:
 
     // Models and textures
     Texture textureTracks;
-    Texture textureTrain;
     // Model loaded from .obj format
     Texture textureFloor;
     Texture textureFloorboards;
@@ -90,8 +89,10 @@ private:
     // Model loaded from .ply format
 //    PlyModel modelTrain2;
 
+
     std::vector<TrackPieceType *> track;
-    std::vector<TrainPieceType *> train;
+    std::vector<pair<TrainPieceType *, Texture *>> train;
+    std::vector<Texture> trainTextures;
 
     //position of last wagon on track
     double trainPosition = 0;
