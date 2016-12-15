@@ -144,6 +144,9 @@ void CCanvas::initializeGL()
     glEnable(GL_LIGHTING);
 
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT2);
+    glEnable(GL_LIGHT3);
     /*
      * The position is transformed by the modelview matrix when glLightfv is called (just as if it were
      * a point), and it is stored in eye coordinates. If the w component of the position is 0.0,
@@ -161,6 +164,18 @@ void CCanvas::initializeGL()
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
     glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmb);
     glLightfv(GL_LIGHT0, GL_DIFFUSE,  lightDiff);
+
+    glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpec);
+    glLightfv(GL_LIGHT1, GL_AMBIENT,  lightAmb);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE,  lightDiff);
+
+    glLightfv(GL_LIGHT2, GL_SPECULAR, lightSpec);
+    glLightfv(GL_LIGHT2, GL_AMBIENT,  lightAmb);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE,  lightDiff);
+
+    glLightfv(GL_LIGHT2, GL_SPECULAR, lightSpec);
+    glLightfv(GL_LIGHT2, GL_AMBIENT,  lightAmb);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE,  lightDiff);
 
     /*
      * Before you can use the texture you need to initialize it by calling the setTexture() method.
@@ -486,12 +501,26 @@ void CCanvas::paintGL()
 
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
+    Sphere sphere(20, 10);
     // Setup the current view
     setView(currentView);
 
     GLfloat lightpos[] = {-5.0, 5.0, 15.0, 1.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+    lightpos[0] = 15.0;
+    lightpos[1] = -15.0;
+    lightpos[2] = -15.0;
+    sphere.draw();
+     glLightfv(GL_LIGHT1, GL_POSITION, lightpos);
+     lightpos[0] = -15.0;
+     lightpos[1] = -55.0;
+     lightpos[2] = -55.0;
+     sphere.draw();
+      glLightfv(GL_LIGHT2, GL_POSITION, lightpos);
+      lightpos[0] = 15.0;
+      lightpos[1] = -15.0;
+      lightpos[2] = 15.0;
+       glLightfv(GL_LIGHT3, GL_POSITION, lightpos);
 //    glPushMatrix();
 //    glTranslated(lightpos[0], lightpos[1], lightpos[2]);
 //    glScaled(0.5, 0.5, 0.5);
@@ -612,7 +641,7 @@ void CCanvas::paintGL()
      *  glGetFloatv (GL_MODELVIEW_MATRIX, matrix);
     */
 
-    Sphere sphere(20, 10);
+    //Sphere sphere(20, 10);
     // Draw track
     glScalef(0.2f, 0.2f, 0.2f);
 

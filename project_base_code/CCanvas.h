@@ -33,7 +33,7 @@ public:
         textureTrain("textures/woodTrain.jpg"),
         textureFloor("textures/carpet2.jpg"),
         textureFloorboards("textures/floor.jpg"),
-        textureWalls("textures/wallpaper.jpg"),
+        textureWalls("textures/wood.jpg"),
         textureCeil("textures/ceiling.jpg"),
         floor("models/floor.obj"),
         track(),
