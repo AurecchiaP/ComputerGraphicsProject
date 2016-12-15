@@ -43,6 +43,10 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
         y_translate += 0.5;
     } else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
         y_translate -= 0.5;
+    } else if (event->key() == Qt::Key_Q){
+        z_translate += 0.5;
+    } else if (event->key() == Qt::Key_E){
+        z_translate -= 0.5;
     } else if (event->key() == Qt::Key_K){
         trainSpeed += 0.1;
     } else if (event->key() == Qt::Key_L){
@@ -419,9 +423,9 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslated(x_translate, y_translate, -15.0);
         glRotated(x_rotate, 1.0, 0.0, 0.0);
-        glRotated(y_rotate, 0.0, 1.0, 0.0);
+        glRotated(y_rotate, 0.0, 0.0, 1.0);
+        glTranslated(x_translate, y_translate, z_translate);
 
         break;
     case Cockpit:
