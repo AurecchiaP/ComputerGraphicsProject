@@ -719,11 +719,11 @@ void CCanvas::paintGL()
         piece->draw();
         piece->applyTransforms();
     }
-    glDisable(GL_STENCIL_TEST);
     glPopMatrix();
     textureTracks.unbind();
 
     // Draw train
+    glStencilOp(GL_KEEP, GL_KEEP, GL_ZERO);
     glPushMatrix();
     glScalef(0.2f, 0.2f, 0.2f);
     size_t i = 0;
@@ -776,6 +776,7 @@ void CCanvas::paintGL()
         }
     }
     glPopMatrix();
+    glDisable(GL_STENCIL_TEST);
 
 
     // Draw shadows on floor
@@ -863,8 +864,8 @@ void CCanvas::paintGL()
 
     shadowMatrix(ground, lightpos);
 
-    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
-    glStencilMask(0x00); // Don't write anything to stencil buffer
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
+    glStencilMask(0x00);
 
     // Train Shadow
     glPushMatrix();
