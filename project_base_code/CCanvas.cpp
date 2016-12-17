@@ -749,21 +749,33 @@ void CCanvas::paintGL()
         textureTrain.unbind();
 
         // Draw penguins
-        glPushMatrix();
+        texturePenguin.bind();
         if (j != train.size()-1){
+            glPushMatrix();
             glTranslated(0, 1.8, 1);
-            glRotated(90, 0, 1, 0);
+            glRotated(-90, 0, 1, 0);
             glScaled(2, 2, 2);
+            penguin.draw();
+            glPopMatrix();
+
+            if (currentView != Cockpit || currentWagon != train.size() - 1 - j) {
+                glPushMatrix();
+                glTranslated(0, 1.8, -1);
+                glRotated(-90, 0, 1, 0);
+                glScaled(2, 2, 2);
+                penguin.draw();
+                glPopMatrix();
+            }
         } else {
+            glPushMatrix();
             glTranslated(0.3, 2.5, -1.5);
             glRotated(20, 0, 1, 0);
             glRotated(-30, 0, 0, 1);
             glScaled(1.3, 1.8, 1.3);
+            penguin.draw();
+            glPopMatrix();
         }
-        texturePenguin.bind();
-        penguin.draw();
         texturePenguin.unbind();
-        glPopMatrix();
 
         //this pop referes to the the push of tracks
         glPopMatrix();
