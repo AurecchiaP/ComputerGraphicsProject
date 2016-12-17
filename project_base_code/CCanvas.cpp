@@ -4,49 +4,196 @@
 #include "TrackPieceType.h"
 #include "TrainPieceType.h"
 
-#define TRAINSPEED 0.25
+#define MOUSE_SPEED 0.15
 
 using namespace std;
+
+// Taken from ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node192.html
+static void
+shadowMatrix(GLfloat ground[4], GLfloat light[4])
+{
+    GLfloat  dot;
+    GLfloat  shadowMat[4][4];
+
+    dot = ground[0] * light[0] +
+          ground[1] * light[1] +
+          ground[2] * light[2] +
+          ground[3] * light[3];
+
+    shadowMat[0][0] = dot - light[0] * ground[0];
+    shadowMat[1][0] = 0.0 - light[0] * ground[1];
+    shadowMat[2][0] = 0.0 - light[0] * ground[2];
+    shadowMat[3][0] = 0.0 - light[0] * ground[3];
+
+    shadowMat[0][1] = 0.0 - light[1] * ground[0];
+    shadowMat[1][1] = dot - light[1] * ground[1];
+    shadowMat[2][1] = 0.0 - light[1] * ground[2];
+    shadowMat[3][1] = 0.0 - light[1] * ground[3];
+
+    shadowMat[0][2] = 0.0 - light[2] * ground[0];
+    shadowMat[1][2] = 0.0 - light[2] * ground[1];
+    shadowMat[2][2] = dot - light[2] * ground[2];
+    shadowMat[3][2] = 0.0 - light[2] * ground[3];
+
+    shadowMat[0][3] = 0.0 - light[3] * ground[0];
+    shadowMat[1][3] = 0.0 - light[3] * ground[1];
+    shadowMat[2][3] = 0.0 - light[3] * ground[2];
+    shadowMat[3][3] = dot - light[3] * ground[3];
+
+    glMultMatrixf((const GLfloat*)shadowMat);
+}
+
+
+
+/****************/
+/* mouse events*/
+/**************/
+void CCanvas::mouseMoveEvent(QMouseEvent *event){
+    int dx = (event->x() - pos.x());
+    int dy = (event->y() - pos.y());
+
+    if (event->buttons() & Qt::LeftButton){
+        if (currentView == Perspective) {
+            x_rotate += dy*MOUSE_SPEED;
+            y_rotate += dx*MOUSE_SPEED;
+        } else if (currentView == Cockpit) {
+            cx_rotate += dx*MOUSE_SPEED;
+            cy_rotate += dy*MOUSE_SPEED;
+        } else {
+            tz_rotate += dx*MOUSE_SPEED;
+            tx_rotate += dy*MOUSE_SPEED;
+        }
+    }
+    pos = event->pos();
+}
+
+void CCanvas::mousePressEvent(QMouseEvent *event){
+    pos = event->pos();
+}
+/* end mouse events */
+
+/* keyboard events */
+
+void CCanvas::keyPressEvent( QKeyEvent * event ){
+    if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
+        x_translate += 0.5;
+    } else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
+        x_translate -= 0.5;
+    } else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
+        y_translate += 0.5;
+    } else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
+        y_translate -= 0.5;
+    } else if (event->key() == Qt::Key_Q){
+        z_translate += 0.5;
+    } else if (event->key() == Qt::Key_E){
+        z_translate -= 0.5;
+    } else if (event->key() == Qt::Key_K){
+        trainSpeed += 0.1;
+    } else if (event->key() == Qt::Key_L){
+        trainSpeed -= 0.1;
+    } else if (event->key() == Qt::Key_H){
+        trainSpeed = 0.0;
+    } else if (event->key() == Qt::Key_Tab) {
+        if (currentView == Perspective) {
+            currentView = Cockpit;
+        } else {
+            currentView = Perspective;
+        }
+    } else if (event->key() == Qt::Key_T) {
+        if (currentView == Teddy) {
+            currentView = Perspective;
+        } else {
+            currentView = Teddy;
+        }
+        currentView = Teddy;
+    } else if (event->key() == Qt::Key_0) {
+        currentWagon = 0;
+    } else if (event->key() == Qt::Key_1) {
+        currentWagon = 1;
+    } else if (event->key() == Qt::Key_2) {
+        currentWagon = 2;
+    } else if (event->key() == Qt::Key_3) {
+        currentWagon = 3;
+    } else if (event->key() == Qt::Key_4) {
+        currentWagon = 4;
+    } else if (event->key() == Qt::Key_5) {
+        currentWagon = 5;
+    } else if (event->key() == Qt::Key_6) {
+        currentWagon = 6;
+    } else if (event->key() == Qt::Key_7) {
+        currentWagon = 7;
+    } else if (event->key() == Qt::Key_8) {
+        currentWagon = 8;
+    } else if (event->key() == Qt::Key_9) {
+        currentWagon = 9;
+    } else if (event->key() == Qt::Key_R) {
+        x_translate = 5.5;
+        y_translate = 7.5;
+        z_translate = -15;
+        cx_rotate = 90;
+        cy_rotate = 0;
+        x_rotate = -30;
+        y_rotate = 0;
+        tx_rotate = -60;
+        tz_rotate = 180;
+    }
+}
+/* end keyboard */
 
 //-----------------------------------------------------------------------------
 // Track types
 //length is the size of the straight piece
-static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double diff) {
-    glTranslated(-13.22809 * diff, 0.0, 0.0);
+static TrackPieceType straight(13.22809, "models/straight_track_short.obj",[](double alpha, bool inv) {
+    if (inv) {
+        glTranslated(13.22809 * alpha, 0.0, 0.0);
+    } else {
+        glTranslated(-13.22809 * alpha, 0.0, 0.0);
+    }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double diff) {
-    const double r = sqrt(9.11696*9.11696 + 5.13948*5.13948);
-    const double x = -r * sin(PI/3.0 * diff);
-    const double y = r * cos(PI/3.0 * diff) - r;
+static TrackPieceType left60(13.049002235133003, "models/curved60.obj", [](double alpha, bool inv) {
+    // r = sqrt(9.11696*9.11696 + 5.13948*5.13948) = 10.4658116891;
+    constexpr double r = 10.4658116891;
+    const double x = -r * sin(PI/3.0 * alpha);
+    const double y = r * cos(PI/3.0 * alpha) - r;
 
-    glTranslated(x, y, 0.0);
-    glRotated(60 * diff, 0, 0, 1);
+    if (inv) {
+        glRotated(-60 * alpha, 0, 0, 1);
+        glTranslated(-x, -y, 0.0);
+    } else {
+        glTranslated(x, y, 0.0);
+        glRotated(60 * alpha, 0, 0, 1);
+    }
 });
 
 //length is the arc of circonference with radius = (external_radius + internal_radius) / 2
-static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double diff) {
-    const double r = sqrt(12.5744*12.5744 + 7.13154*7.13154);
+static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](double alpha, bool inv) {
+    // r = sqrt(12.5744*12.5744 + 7.13154*7.13154) = 14.4559468085
+    constexpr double r = 14.4559468085;
+    const double x = r * sin(-PI/3.0 * alpha);
+    const double y = -r * cos(-PI/3.0 * alpha) + r;
 
-    const double x = r * sin(-PI/3.0 * diff);
-    const double y = -r * cos(-PI/3.0 * diff) + r;
-
-    glTranslated(x, y, 0.0);
-    glRotated(-60 * diff, 0, 0, 1);
+    if (inv) {
+        glRotated(60 * alpha, 0, 0, 1);
+        glTranslated(-x, -y, 0.0);
+    } else {
+        glTranslated(x, y, 0.0);
+        glRotated(-60 * alpha, 0, 0, 1);
+    }
 });
 
 //-----------------------------------------------------------------------------
 // Train types
 static TrainPieceType locomotive("models/train.obj", 5.0);
 
-static TrainPieceType wagon("models/wagon_short.obj", 5.5);
+static TrainPieceType wagon("models/wagon_short.obj", 5.57);
 
 //-----------------------------------------------------------------------------
 
 void CCanvas::initializeGL()
 {
-    glClearColor(0.0f, 0.0f, 1.0f, 0.5f);			   // black background
+    glClearColor(1.0f, 1.0f, 1.0f, 0.5f);			   // black background
     glClearDepth(1.0f);								   // depth buffer setup
     glEnable(GL_DEPTH_TEST);						   // enables depth testing
     glDepthFunc(GL_LEQUAL);							   // the type of depth testing to do
@@ -67,13 +214,10 @@ void CCanvas::initializeGL()
      * light in eye coordinates, and attenuation is enabled. The default position is (0,0,1,0); thus,
      * the default light source is directional, parallel to, and in the direction of the -z axis.
      */
-    GLfloat lightpos[] = {0.0, 0.0, 10.0, 1.0};
-    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
-
-    GLfloat lightAmb[]  = {0.3, 0.3, 0.3, 1.0};
+    GLfloat lightAmb[]  = {0.6, 0.6, 0.6, 1.0};
     GLfloat lightDiff[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat lightSpec[] = {0.5, 0.5, 0.5, 1.0};
+    GLfloat lightSpec[] = {1.0, 1.0, 1.0, 1.0};
 
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
     glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmb);
@@ -87,6 +231,12 @@ void CCanvas::initializeGL()
     textureFloor.setTexture();
     textureFloorboards.setTexture();
     textureTrain.setTexture();
+    textureWalls.setTexture();
+    textureCeil.setTexture();
+    texbaseboard.setTexture();
+    texturePenguin.setTexture();
+    textureTeddy.setTexture();
+    textureBlack.setTexture();
 
     // Initialize models for all types
     straight.init();
@@ -98,6 +248,10 @@ void CCanvas::initializeGL()
 
     // initialise floor
     floor.init();
+    penguin.init();
+
+    // initialise teddy
+    teddy.init();
 
     // Create the track
     track.push_back(&straight);
@@ -202,8 +356,7 @@ void CCanvas::initializeGL()
     }
 
     // Create train, wagons pushed in inverse order
-
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 9; ++i) {
         train.push_back(&wagon);
     }
     train.push_back(&locomotive);
@@ -337,11 +490,61 @@ void CCanvas::resizeGL(int width, int height)
 void CCanvas::setView(View _view) {
     switch(_view) {
     case Perspective:
-        glTranslated(5.5, -0.5, -15.0);
-        glRotated(-30, 1.0, 0.0, 0.0);
+        glRotated(x_rotate, 1.0, 0.0, 0.0);
+        glRotated(y_rotate, 0.0, 0.0, 1.0);
+        glTranslated(x_translate, y_translate, z_translate);
+        break;
+    case Teddy:
+        glRotatef(tx_rotate, 1, 0, 0 );
+        glRotatef(tz_rotate, 0, 0, 1 );
+        glTranslatef(5.05f,-4.5f,-2.3f);
         break;
     case Cockpit:
-        // Maybe you want to have an option to view the scene from the train cockpit, up to you
+        // Scaling to get correct transfrom distances
+        const double scaling = 0.2;
+
+        glScaled(scaling, scaling, scaling);
+
+        glRotated(-90, 1, 0, 0);
+        // Revert position from in front of train to track level
+        glRotated(-cx_rotate, 0, 0, 1);
+//        glRotated(-cy_rotate, 0, 1, 0);
+
+        if (currentWagon == 0) {
+            glTranslated(-1.6, -3.99761/2.0 - 0.65, -4.0);
+        } else {
+            glTranslated(-1.4, -3.99761/2.0, -3.5);
+        }
+
+        // Get in front of train
+        double currentPosition = trainPosition;
+        for (size_t j = 0; j < train.size() - currentWagon - 1; ++j) {
+            currentPosition += train[j]->len;
+        }
+
+        // Get index position of current track piece, and number of track pieces to cover
+        int i = 0;
+        size_t steps = 0;
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
+            i = (i + 1) % track.size();
+            ++steps;
+        }
+
+        // Reverse partial transformation
+        track[i]->invertTransforms(currentPosition / track[i]->len);
+
+        // Reverse remaining track transformations
+        for (size_t j = 0; j < steps; ++j) {
+            --i;
+            if (i < 0) {
+                i += track.size();
+            }
+            track[i]->invertTransforms();
+        }
+
+        // Revert the scaling
+        glScaled(1.0/scaling, 1.0/scaling, 1.0/scaling);
         break;
     }
 }
@@ -355,120 +558,178 @@ void CCanvas::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
     // Setup the current view
-    setView(View::Perspective);
+    setView(currentView);
 
-    // You can always change the light position here if you want
-    GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};
+    GLfloat lightpos[] = {15.0, -5.0, 15.0, 0.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
-    //    glBegin(GL_TRIANGLES);
-    //        glColor3f(1.0, 1.0, 0.0);
-    //        glVertex4fv(lightpos);
-    //        glVertex4f(lightpos[0], lightpos[1] + 1, lightpos[2], lightpos[3]);
-    //        glVertex4f(lightpos[0], lightpos[1], lightpos[2] + 1, lightpos[3]);
-    //    glEnd();
+    // Light position sphere
+//    glPushMatrix();
+//        glTranslated(lightpos[0], lightpos[1], lightpos[2]);
+//        glScaled(0.5, 0.5, 0.5);
+//        Sphere sphere;
+//        sphere.draw();
+//    glPopMatrix();
 
     /**** Axes in the global coordinate system ****/
 
-    glDisable(GL_LIGHTING);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-6.0f, 0.0f, 0.0f);
-    glVertex3f(6.0f, 0.0f, 0.0f);
-    glEnd();
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, -6.0f, 0.0f);
-    glVertex3f(0.0f, 6.0f, 0.0f);
-    glEnd();
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glBegin(GL_LINES);
-    glVertex3f(0.0f, 0.0f, -6.0f);
-    glVertex3f(0.0f, 0.0f, 6.0f);
-    glEnd();
-    glEnable(GL_LIGHTING);
+//    glDisable(GL_LIGHTING);
+//    glColor3f(1.0f, 0.0f, 0.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(-6.0f, 0.0f, 0.0f);
+//    glVertex3f(6.0f, 0.0f, 0.0f);
+//    glEnd();
+//    glColor3f(0.0f, 1.0f, 0.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(0.0f, -6.0f, 0.0f);
+//    glVertex3f(0.0f, 6.0f, 0.0f);
+//    glEnd();
+//    glColor3f(0.0f, 0.0f, 1.0f);
+//    glBegin(GL_LINES);
+//    glVertex3f(0.0f, 0.0f, -6.0f);
+//    glVertex3f(0.0f, 0.0f, 6.0f);
+//    glEnd();
+//    glEnable(GL_LIGHTING);
 
-    /**** Setup and draw your objects ****/
+    //carpet
+    textureFloor.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(4.0, 4.0);    glVertex3f(-20.0f, -6.0f, 0.0f ); // bottom left
+      glTexCoord2f(0.0, 0.0);    glVertex3f(10.0f, -6.0f, 0.0f ); // bottom right
+      glTexCoord2f(0.0, 4.0);    glVertex3f(10.0f, 14.0f, 0.0f ); // top right
+      glTexCoord2f(4.0, 0.0);    glVertex3f(-20.0f, 14.0f, 0.0f); // top left
+    glEnd();
+    textureFloor.unbind();
 
-    // You can freely enable/disable some of the lights in the scene as you wish
-    //glEnable(GL_LIGHT0);
-    //glDisable(GL_LIGHT1);
-    // Before drawing an object, you can set its material properties
-    /*
-    glColor3f(0.5f, 0.5f, 0.5f);
-    GLfloat amb[]  = {0.1f, 0.1f, 0.1f};
-    GLfloat diff[] = {0.7f, 0.7f, 0.7f};
-    GLfloat spec[] = {0.1f, 0.1f, 0.1f};
-    GLfloat shin = 0.0001;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shin);
-    */
-
-    // Drawing the object with texture
     // floorboards
     textureFloorboards.bind();
     glBegin(GL_QUADS);
-      glTexCoord2f(0, 8.0);    glVertex3f(-80.0f, 50.0f, -0.2f); // top left
-      glTexCoord2f(0.0, 0.0);    glVertex3f(-80.0f, -10.0f, -0.2f ); // bottom left
-      glTexCoord2f(8.0, 0.0);    glVertex3f(80.0f, 50.0f, -0.2f ); // top right
-      glTexCoord2f(8.0, 8.0);    glVertex3f(80.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, -0.2f ); // bottom left
+      glTexCoord2f(0.0, 4.0);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(4.0, 4.0);    glVertex3f(20.0f, 20.0f, -0.2f ); // top right
+      glTexCoord2f(4, 0.0);    glVertex3f(-30.0f, 20.0f, -0.2f); // top left
     glEnd();
     textureFloorboards.unbind();
-    textureTracks.bind();
-    // You can stack new transformation matrix if you don't want
-    // the previous transformations to apply on this object
-    //glPushMatrix();
-    /*
-     * Obtaining the values of the current modelview matrix
-     *  GLfloat matrix[16];
-     *  glGetFloatv (GL_MODELVIEW_MATRIX, matrix);
-    */
+
+    // walls
+    textureWalls.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-30.0f, 20.0f, -0.2f ); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(20.0f, 20.0f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(-30.0f, 20.0f, -0.2f); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(20.0f, 20.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(20.0f, 20.0f, 22.2f); // top left
+
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+    glEnd();
+    textureWalls.unbind();
+
+
+    // baseboard
+    texbaseboard.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-29.9f, 19.9f, -0.2f ); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(19.9f, 19.9f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(19.9f, 19.9f, 2.2f ); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top left
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-29.9f, -10.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(-29.9f, 19.9f, -0.2f); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-29.9f, -10.0f, 2.2f); // top left
+
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(19.9f, 19.9f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(19.9f, -10.9f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(19.9f, -10.9f, 2.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(19.9f, 19.9f, 2.2f); // top left
+
+    glEnd();
+    glBegin(GL_QUADS);
+        glTexCoord2f(4, 4);    glVertex3f(-29.9f, -9.9f, -0.2f); // bottom left
+        glTexCoord2f(5, 4);    glVertex3f(19.9f, -9.9f, -0.2f ); // bottom right
+        glTexCoord2f(5, 5);    glVertex3f(19.9f, -9.9f, 2.2f); // top right
+        glTexCoord2f(4, 5);    glVertex3f(-29.9f, -9.9f, 2.2f); // top left
+    glEnd();
+    texbaseboard.unbind();
+
+    // Ceiling
+    textureCeil.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, 22.2f ); // bottom left
+      glTexCoord2f(1.0, 1.0);    glVertex3f(20.0f, -10.0f, 22.2f ); // bottom right
+      glTexCoord2f(1.0, 0.0);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
+      glTexCoord2f(0, 1.0);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
+    glEnd();
+    textureCeil.unbind();
+
+
+    // Teddy
+    glPushMatrix();
+    glTranslatef(-5.0f,4.5f,0.0f);
+    glRotatef(90, 0, 0, 1 );
+    glRotatef(90, 1, 0, 0 );
+    glScalef(2.5,2.5,2.5);
+    textureTeddy.bind();
+    teddy.draw();
+    textureTeddy.unbind();
+    glPopMatrix();
 
     // Draw track
-    glScalef(0.2f, 0.2f, 0.2f);
+    textureTracks.bind();
 
     glPushMatrix();
+
+    // Stencil setup for shadow on track
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    glScalef(0.2f, 0.2f, 0.2f);
     for (TrackPieceType * piece : track) {
         piece->draw();
         piece->applyTransforms();
     }
+    glDisable(GL_STENCIL_TEST);
     glPopMatrix();
     textureTracks.unbind();
 
-
-    // scaled floor texture
-    textureFloor.bind();
-    glPushMatrix();
-    glTranslatef(-85.0,-1.5f,0);
-    floor.draw();
-    glTranslatef(0,45,0);
-    floor.draw();
-    textureFloor.unbind();
-    for(int i = 0 ; i < 4; ++i){
-        textureFloor.bind();
-
-        glTranslatef(45.0,0,0);
-        floor.draw();
-        if(i%2==0){
-            glTranslatef(0,-45,0);
-            floor.draw();
-        }else{
-            glTranslatef(0,45,0);
-            floor.draw();
-        }
-        textureFloor.unbind();
-    }
-    glPopMatrix();
-
     // Draw train
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, 0.2f);
     size_t i = 0;
     double currentPosition = trainPosition;
-    for(TrainPieceType * piece : train) {
+    for(size_t j = 0; j < train.size(); j++) {
+        TrainPieceType * piece = train[j];
         while (currentPosition >= track[i]->len) {
             currentPosition -= track[i]->len;
             track[i]->applyTransforms();
@@ -487,17 +748,184 @@ void CCanvas::paintGL()
         piece->draw();
         textureTrain.unbind();
 
-        glPopMatrix();
+        // Draw penguins
+        texturePenguin.bind();
+        if (j != train.size()-1){
+            glPushMatrix();
+            glTranslated(0, 1.8, 1);
+            glRotated(-90, 0, 1, 0);
+            glScaled(2, 2, 2);
+            penguin.draw();
+            glPopMatrix();
 
+            if (currentView != Cockpit || currentWagon != train.size() - 1 - j) {
+                glPushMatrix();
+                glTranslated(0, 1.8, -1);
+                glRotated(-90, 0, 1, 0);
+                glScaled(2, 2, 2);
+                penguin.draw();
+                glPopMatrix();
+            }
+        } else {
+            glPushMatrix();
+            glTranslated(0.3, 2.5, -1.5);
+            glRotated(20, 0, 1, 0);
+            glRotated(-30, 0, 0, 1);
+            glScaled(1.3, 1.8, 1.3);
+            penguin.draw();
+            glPopMatrix();
+        }
+        texturePenguin.unbind();
+
+        //this pop referes to the the push of tracks
+        glPopMatrix();
         currentPosition += piece->len;
         while (currentPosition >= trackLength){
             currentPosition -= trackLength;
         }
+        while (currentPosition < 0) {
+            currentPosition += trackLength;
+        }
     }
+    glPopMatrix();
+
+
+    // Draw shadows on floor
+    glPushMatrix();
+    GLfloat ground[4];
+
+    ground[0] = 0.0f;
+    ground[1] = 0.0f;
+    ground[2] = 1.0f;
+    ground[3] = -0.01f;
+
+    shadowMatrix(ground, lightpos);
+
+    textureBlack.bind();
+
+
+    // Teddy shadow
+    glPushMatrix();
+    glTranslatef(-5.0f,4.5f,0.0f);
+    glRotatef(90, 0, 0, 1 );
+    glRotatef(90, 1, 0, 0 );
+    glScalef(2.5,2.5,2.5);
+    teddy.draw();
+    glPopMatrix();
+
+
+    // Track shadow
+    glPushMatrix();
+    glScaled(0.2f, 0.2f, 0.2f);
+    for (TrackPieceType * piece : track) {
+        piece->draw();
+        piece->applyTransforms();
+    }
+    glPopMatrix();
+
+
+    // Train Shadow
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, 0.2f);
+    i = 0;
+    currentPosition = trainPosition;
+    for(size_t j = 0; j < train.size(); j++) {
+        TrainPieceType * piece = train[j];
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
+            track[i]->applyTransforms();
+            i = (i + 1) % track.size();
+        }
+
+        glPushMatrix();
+        track[i]->applyTransforms(currentPosition / track[i]->len);
+
+        glTranslated(0, 3.99761/2.0, 0.922535);
+        glRotated(-90, 0, 0, 1);
+        glRotated(90, 1, 0, 0);
+        glScaled(1.1, 1.1, 1.1);
+
+        piece->draw();
+
+        glPopMatrix();
+        currentPosition += piece->len;
+        while (currentPosition >= trackLength){
+            currentPosition -= trackLength;
+        }
+        while (currentPosition < 0) {
+            currentPosition += trackLength;
+        }
+    }
+    glPopMatrix();
+
+
+    glPopMatrix();
+
+
+
+    // Shadows on track
+    glPushMatrix();
+    glEnable(GL_STENCIL_TEST);
+
+    // Draw train shadow with stencil testing
+    ground[0] = 0.0f;
+    ground[1] = 0.0f;
+    ground[2] = 1.0f;
+    ground[3] = -0.25f;
+
+    shadowMatrix(ground, lightpos);
+
+    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+    glStencilMask(0x00); // Don't write anything to stencil buffer
+
+    // Train Shadow
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, 0.2f);
+    i = 0;
+    currentPosition = trainPosition;
+    for(size_t j = 0; j < train.size(); j++) {
+        TrainPieceType * piece = train[j];
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
+            track[i]->applyTransforms();
+            i = (i + 1) % track.size();
+        }
+
+        glPushMatrix();
+        track[i]->applyTransforms(currentPosition / track[i]->len);
+
+        glTranslated(0, 3.99761/2.0, 0.922535);
+        glRotated(-90, 0, 0, 1);
+        glRotated(90, 1, 0, 0);
+        glScaled(1.1, 1.1, 1.1);
+
+        piece->draw();
+
+        glPopMatrix();
+        currentPosition += piece->len;
+        while (currentPosition >= trackLength){
+            currentPosition -= trackLength;
+        }
+        while (currentPosition < 0) {
+            currentPosition += trackLength;
+        }
+    }
+    glPopMatrix();
+
+    glDisable(GL_STENCIL_TEST);
+
+
+    glPopMatrix();
+
+    textureBlack.unbind();
+
 
     // Move train around track
-    trainPosition += TRAINSPEED;
+    trainPosition += trainSpeed;
     while (trainPosition >= trackLength) {
         trainPosition -= trackLength;
+    }
+    while (trainPosition < 0) {
+        trainPosition += trackLength;
     }
 }
