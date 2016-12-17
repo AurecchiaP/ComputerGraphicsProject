@@ -8,12 +8,12 @@
 
 using namespace std;
 
-// Copied from ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node192.html
+// Taken from ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node192.html
 static void
-myShadowMatrix(GLfloat ground[4], GLfloat light[4])
+shadowMatrix(GLfloat ground[4], GLfloat light[4])
 {
-    float  dot;
-    float  shadowMat[4][4];
+    GLfloat  dot;
+    GLfloat  shadowMat[4][4];
 
     dot = ground[0] * light[0] +
           ground[1] * light[1] +
@@ -748,12 +748,13 @@ void CCanvas::paintGL()
         piece->draw();
         textureTrain.unbind();
 
+        // Draw penguins
         glPushMatrix();
-        if( j != train.size()-1){
+        if (j != train.size()-1){
             glTranslated(0, 1.8, 1);
             glRotated(90, 0, 1, 0);
             glScaled(2, 2, 2);
-        }else{
+        } else {
             glTranslated(0.3, 2.5, -1.5);
             glRotated(20, 0, 1, 0);
             glRotated(-30, 0, 0, 1);
@@ -786,7 +787,7 @@ void CCanvas::paintGL()
     ground[2] = 1.0f;
     ground[3] = -0.01f;
 
-    myShadowMatrix(ground, lightpos);
+    shadowMatrix(ground, lightpos);
 
     textureBlack.bind();
 
@@ -860,7 +861,7 @@ void CCanvas::paintGL()
     ground[2] = 1.0f;
     ground[3] = -0.25f;
 
-    myShadowMatrix(ground, lightpos);
+    shadowMatrix(ground, lightpos);
 
     glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
     glStencilMask(0x00); // Don't write anything to stencil buffer
@@ -903,8 +904,6 @@ void CCanvas::paintGL()
 
 
     glPopMatrix();
-
-
 
     textureBlack.unbind();
 
