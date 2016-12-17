@@ -8,6 +8,43 @@
 
 using namespace std;
 
+// Taken from ftp://ftp.sgi.com/opengl/contrib/blythe/advanced99/notes/node192.html
+static void
+shadowMatrix(GLfloat ground[4], GLfloat light[4])
+{
+    GLfloat  dot;
+    GLfloat  shadowMat[4][4];
+
+    dot = ground[0] * light[0] +
+          ground[1] * light[1] +
+          ground[2] * light[2] +
+          ground[3] * light[3];
+
+    shadowMat[0][0] = dot - light[0] * ground[0];
+    shadowMat[1][0] = 0.0 - light[0] * ground[1];
+    shadowMat[2][0] = 0.0 - light[0] * ground[2];
+    shadowMat[3][0] = 0.0 - light[0] * ground[3];
+
+    shadowMat[0][1] = 0.0 - light[1] * ground[0];
+    shadowMat[1][1] = dot - light[1] * ground[1];
+    shadowMat[2][1] = 0.0 - light[1] * ground[2];
+    shadowMat[3][1] = 0.0 - light[1] * ground[3];
+
+    shadowMat[0][2] = 0.0 - light[2] * ground[0];
+    shadowMat[1][2] = 0.0 - light[2] * ground[1];
+    shadowMat[2][2] = dot - light[2] * ground[2];
+    shadowMat[3][2] = 0.0 - light[2] * ground[3];
+
+    shadowMat[0][3] = 0.0 - light[3] * ground[0];
+    shadowMat[1][3] = 0.0 - light[3] * ground[1];
+    shadowMat[2][3] = 0.0 - light[3] * ground[2];
+    shadowMat[3][3] = dot - light[3] * ground[3];
+
+    glMultMatrixf((const GLfloat*)shadowMat);
+}
+
+
+
 /****************/
 /* mouse events*/
 /**************/
@@ -178,9 +215,9 @@ void CCanvas::initializeGL()
      * the default light source is directional, parallel to, and in the direction of the -z axis.
      */
 
-    GLfloat lightAmb[]  = {0.3, 0.3, 0.3, 1.0};
+    GLfloat lightAmb[]  = {0.6, 0.6, 0.6, 1.0};
     GLfloat lightDiff[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat lightSpec[] = {0.5, 0.5, 0.5, 1.0};
+    GLfloat lightSpec[] = {1.0, 1.0, 1.0, 1.0};
 
     glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpec);
     glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmb);
@@ -199,6 +236,7 @@ void CCanvas::initializeGL()
     texbaseboard.setTexture();
     texturePenguin.setTexture();
     textureTeddy.setTexture();
+    textureBlack.setTexture();
 
     // Initialize models for all types
     straight.init();
@@ -525,26 +563,16 @@ void CCanvas::paintGL()
     // Setup the current view
     setView(currentView);
 
-    GLfloat lightpos[] = {-5.0, 5.0, 15.0, 0.0};
+    GLfloat lightpos[] = {15.0, -5.0, 15.0, 0.0};
     glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
+    // Light position sphere
 //    glPushMatrix();
-//    glTranslated(lightpos[0], lightpos[1], lightpos[2]);
-//    glScaled(0.5, 0.5, 0.5);
-//    Sphere sphere;
-//    sphere.draw();
+//        glTranslated(lightpos[0], lightpos[1], lightpos[2]);
+//        glScaled(0.5, 0.5, 0.5);
+//        Sphere sphere;
+//        sphere.draw();
 //    glPopMatrix();
-
-    // You can always change the light position here if you want
-//    GLfloat lightpos[] = {-4.0f, 1.0f, 20.0f, 1.0f};
-//    glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-
-    //    glBegin(GL_TRIANGLES);
-    //        glColor3f(1.0, 1.0, 0.0);
-    //        glVertex4fv(lightpos);
-    //        glVertex4f(lightpos[0], lightpos[1] + 1, lightpos[2], lightpos[3]);
-    //        glVertex4f(lightpos[0], lightpos[1], lightpos[2] + 1, lightpos[3]);
-    //    glEnd();
 
     /**** Axes in the global coordinate system ****/
 
@@ -566,25 +594,6 @@ void CCanvas::paintGL()
 //    glEnd();
 //    glEnable(GL_LIGHTING);
 
-    /**** Setup and draw your objects ****/
-
-    // You can freely enable/disable some of the lights in the scene as you wish
-    //glEnable(GL_LIGHT0);
-    //glDisable(GL_LIGHT1);
-    // Before drawing an object, you can set its material properties
-    /*
-    glColor3f(0.5f, 0.5f, 0.5f);
-    GLfloat amb[]  = {0.1f, 0.1f, 0.1f};
-    GLfloat diff[] = {0.7f, 0.7f, 0.7f};
-    GLfloat spec[] = {0.1f, 0.1f, 0.1f};
-    GLfloat shin = 0.0001;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shin);
-    */
-
-    // Drawing the object with texture
     //carpet
     textureFloor.bind();
     glBegin(GL_QUADS);
@@ -606,140 +615,117 @@ void CCanvas::paintGL()
     textureFloorboards.unbind();
 
     // walls
-        textureWalls.bind();
-        glBegin(GL_QUADS);
-          glTexCoord2f(4, 4);    glVertex3f(-30.0f, 20.0f, -0.2f ); // bottom left
-          glTexCoord2f(5, 4);    glVertex3f(20.0f, 20.0f, -0.2f ); // bottom right
-          glTexCoord2f(5, 5);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
-          glTexCoord2f(4, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
-        glEnd();
+    textureWalls.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-30.0f, 20.0f, -0.2f ); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(20.0f, 20.0f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
+    glEnd();
 
-        glBegin(GL_QUADS);
-          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
-          glTexCoord2f(5, 4);    glVertex3f(-30.0f, 20.0f, -0.2f); // bottom right
-          glTexCoord2f(5, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top right
-          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(-30.0f, 20.0f, -0.2f); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(-30.0f, 20.0f, 22.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
 
-        glEnd();
+    glEnd();
 
-        glBegin(GL_QUADS);
-          glTexCoord2f(4, 4);    glVertex3f(20.0f, 20.0f, -0.2f); // bottom left
-          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
-          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
-          glTexCoord2f(4, 5);    glVertex3f(20.0f, 20.0f, 22.2f); // top left
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(20.0f, 20.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(20.0f, 20.0f, 22.2f); // top left
 
-        glEnd();
+    glEnd();
 
-        glBegin(GL_QUADS);
-          glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
-          glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
-          glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
-          glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
-        glEnd();
-        textureWalls.unbind();
-
-
-        // baseboard
-            texbaseboard.bind();
-            glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(-29.9f, 19.9f, -0.2f ); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(19.9f, 19.9f, -0.2f ); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(19.9f, 19.9f, 2.2f ); // top right
-              glTexCoord2f(4, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top left
-            glEnd();
-
-            glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(-29.9f, -10.0f, -0.2f); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(-29.9f, 19.9f, -0.2f); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top right
-              glTexCoord2f(4, 5);    glVertex3f(-29.9f, -10.0f, 2.2f); // top left
-
-            glEnd();
-
-            glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(19.9f, 19.9f, -0.2f); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(19.9f, -10.9f, -0.2f ); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(19.9f, -10.9f, 2.2f); // top right
-              glTexCoord2f(4, 5);    glVertex3f(19.9f, 19.9f, 2.2f); // top left
-
-            glEnd();
-            glBegin(GL_QUADS);
-                glTexCoord2f(4, 4);    glVertex3f(-29.9f, -9.9f, -0.2f); // bottom left
-                glTexCoord2f(5, 4);    glVertex3f(19.9f, -9.9f, -0.2f ); // bottom right
-                glTexCoord2f(5, 5);    glVertex3f(19.9f, -9.9f, 2.2f); // top right
-                glTexCoord2f(4, 5);    glVertex3f(-29.9f, -9.9f, 2.2f); // top left
-            glEnd();
-            texbaseboard.unbind();
-
-        textureCeil.bind();
-        glBegin(GL_QUADS);
-          glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, 22.2f ); // bottom left
-          glTexCoord2f(1.0, 1.0);    glVertex3f(20.0f, -10.0f, 22.2f ); // bottom right
-          glTexCoord2f(1.0, 0.0);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
-          glTexCoord2f(0, 1.0);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
-        glEnd();
-        textureCeil.unbind();
-
-        // draw teddy
-        glPushMatrix();
-        glTranslatef(-5.0f,4.5f,0.0f);
-        glRotatef(90, 0, 0, 1 );
-        glRotatef(90, 1, 0, 0 );
-        glScalef(2.5,2.5,2.5);
-        textureTeddy.bind();
-        teddy.draw();
-        textureTeddy.unbind();
-        glPopMatrix();
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-30.0f, -10.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(20.0f, -10.0f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(20.0f, -10.0f, 22.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-30.0f, -10.0f, 22.2f); // top left
+    glEnd();
+    textureWalls.unbind();
 
 
-    textureTracks.bind();
-    // You can stack new transformation matrix if you don't want
-    // the previous transformations to apply on this object
-    //glPushMatrix();
-    /*
-     * Obtaining the values of the current modelview matrix
-     *  GLfloat matrix[16];
-     *  glGetFloatv (GL_MODELVIEW_MATRIX, matrix);
-    */
+    // baseboard
+    texbaseboard.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-29.9f, 19.9f, -0.2f ); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(19.9f, 19.9f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(19.9f, 19.9f, 2.2f ); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top left
+    glEnd();
 
-    //Sphere sphere(20, 10);
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(-29.9f, -10.0f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(-29.9f, 19.9f, -0.2f); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(-29.9f, -10.0f, 2.2f); // top left
+
+    glEnd();
+
+    glBegin(GL_QUADS);
+      glTexCoord2f(4, 4);    glVertex3f(19.9f, 19.9f, -0.2f); // bottom left
+      glTexCoord2f(5, 4);    glVertex3f(19.9f, -10.9f, -0.2f ); // bottom right
+      glTexCoord2f(5, 5);    glVertex3f(19.9f, -10.9f, 2.2f); // top right
+      glTexCoord2f(4, 5);    glVertex3f(19.9f, 19.9f, 2.2f); // top left
+
+    glEnd();
+    glBegin(GL_QUADS);
+        glTexCoord2f(4, 4);    glVertex3f(-29.9f, -9.9f, -0.2f); // bottom left
+        glTexCoord2f(5, 4);    glVertex3f(19.9f, -9.9f, -0.2f ); // bottom right
+        glTexCoord2f(5, 5);    glVertex3f(19.9f, -9.9f, 2.2f); // top right
+        glTexCoord2f(4, 5);    glVertex3f(-29.9f, -9.9f, 2.2f); // top left
+    glEnd();
+    texbaseboard.unbind();
+
+    // Ceiling
+    textureCeil.bind();
+    glBegin(GL_QUADS);
+      glTexCoord2f(0.0, 0.0);    glVertex3f(-30.0f, -10.0f, 22.2f ); // bottom left
+      glTexCoord2f(1.0, 1.0);    glVertex3f(20.0f, -10.0f, 22.2f ); // bottom right
+      glTexCoord2f(1.0, 0.0);    glVertex3f(20.0f, 20.0f, 22.2f ); // top right
+      glTexCoord2f(0, 1.0);    glVertex3f(-30.0f, 20.0f, 22.2f); // top left
+    glEnd();
+    textureCeil.unbind();
+
+
+    // Teddy
+    glPushMatrix();
+    glTranslatef(-5.0f,4.5f,0.0f);
+    glRotatef(90, 0, 0, 1 );
+    glRotatef(90, 1, 0, 0 );
+    glScalef(2.5,2.5,2.5);
+    textureTeddy.bind();
+    teddy.draw();
+    textureTeddy.unbind();
+    glPopMatrix();
+
     // Draw track
-    glScalef(0.2f, 0.2f, 0.2f);
+    textureTracks.bind();
 
     glPushMatrix();
+
+    // Stencil setup for shadow on track
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    glScalef(0.2f, 0.2f, 0.2f);
     for (TrackPieceType * piece : track) {
         piece->draw();
         piece->applyTransforms();
     }
+    glDisable(GL_STENCIL_TEST);
     glPopMatrix();
     textureTracks.unbind();
 
-
-//    // scaled floor texture
-//    textureFloor.bind();
-//    glPushMatrix();
-//    glTranslatef(-85.0,-1.5f,0);
-//    floor.draw();
-//    glTranslatef(0,45,0);
-//    floor.draw();
-//    textureFloor.unbind();
-//    for(int i = 0 ; i < 3; ++i){
-//        textureFloor.bind();
-
-//        glTranslatef(45.0,0,0);
-//        floor.draw();
-//        if(i%2==0){
-//            glTranslatef(0,-45,0);
-//            floor.draw();
-//        }else{
-//            glTranslatef(0,45,0);
-//            floor.draw();
-//        }
-//        textureFloor.unbind();
-//    }
-//    glPopMatrix();
-
     // Draw train
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, 0.2f);
     size_t i = 0;
     double currentPosition = trainPosition;
     for(size_t j = 0; j < train.size(); j++) {
@@ -762,12 +748,13 @@ void CCanvas::paintGL()
         piece->draw();
         textureTrain.unbind();
 
+        // Draw penguins
         glPushMatrix();
-        if( j != train.size()-1){
+        if (j != train.size()-1){
             glTranslated(0, 1.8, 1);
             glRotated(90, 0, 1, 0);
             glScaled(2, 2, 2);
-        }else{
+        } else {
             glTranslated(0.3, 2.5, -1.5);
             glRotated(20, 0, 1, 0);
             glRotated(-30, 0, 0, 1);
@@ -788,6 +775,138 @@ void CCanvas::paintGL()
             currentPosition += trackLength;
         }
     }
+    glPopMatrix();
+
+
+    // Draw shadows on floor
+    glPushMatrix();
+    GLfloat ground[4];
+
+    ground[0] = 0.0f;
+    ground[1] = 0.0f;
+    ground[2] = 1.0f;
+    ground[3] = -0.01f;
+
+    shadowMatrix(ground, lightpos);
+
+    textureBlack.bind();
+
+
+    // Teddy shadow
+    glPushMatrix();
+    glTranslatef(-5.0f,4.5f,0.0f);
+    glRotatef(90, 0, 0, 1 );
+    glRotatef(90, 1, 0, 0 );
+    glScalef(2.5,2.5,2.5);
+    teddy.draw();
+    glPopMatrix();
+
+
+    // Track shadow
+    glPushMatrix();
+    glScaled(0.2f, 0.2f, 0.2f);
+    for (TrackPieceType * piece : track) {
+        piece->draw();
+        piece->applyTransforms();
+    }
+    glPopMatrix();
+
+
+    // Train Shadow
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, 0.2f);
+    i = 0;
+    currentPosition = trainPosition;
+    for(size_t j = 0; j < train.size(); j++) {
+        TrainPieceType * piece = train[j];
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
+            track[i]->applyTransforms();
+            i = (i + 1) % track.size();
+        }
+
+        glPushMatrix();
+        track[i]->applyTransforms(currentPosition / track[i]->len);
+
+        glTranslated(0, 3.99761/2.0, 0.922535);
+        glRotated(-90, 0, 0, 1);
+        glRotated(90, 1, 0, 0);
+        glScaled(1.1, 1.1, 1.1);
+
+        piece->draw();
+
+        glPopMatrix();
+        currentPosition += piece->len;
+        while (currentPosition >= trackLength){
+            currentPosition -= trackLength;
+        }
+        while (currentPosition < 0) {
+            currentPosition += trackLength;
+        }
+    }
+    glPopMatrix();
+
+
+    glPopMatrix();
+
+
+
+    // Shadows on track
+    glPushMatrix();
+    glEnable(GL_STENCIL_TEST);
+
+    // Draw train shadow with stencil testing
+    ground[0] = 0.0f;
+    ground[1] = 0.0f;
+    ground[2] = 1.0f;
+    ground[3] = -0.25f;
+
+    shadowMatrix(ground, lightpos);
+
+    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+    glStencilMask(0x00); // Don't write anything to stencil buffer
+
+    // Train Shadow
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, 0.2f);
+    i = 0;
+    currentPosition = trainPosition;
+    for(size_t j = 0; j < train.size(); j++) {
+        TrainPieceType * piece = train[j];
+        while (currentPosition >= track[i]->len) {
+            currentPosition -= track[i]->len;
+            track[i]->applyTransforms();
+            i = (i + 1) % track.size();
+        }
+
+        glPushMatrix();
+        track[i]->applyTransforms(currentPosition / track[i]->len);
+
+        glTranslated(0, 3.99761/2.0, 0.922535);
+        glRotated(-90, 0, 0, 1);
+        glRotated(90, 1, 0, 0);
+        glScaled(1.1, 1.1, 1.1);
+
+        piece->draw();
+
+        glPopMatrix();
+        currentPosition += piece->len;
+        while (currentPosition >= trackLength){
+            currentPosition -= trackLength;
+        }
+        while (currentPosition < 0) {
+            currentPosition += trackLength;
+        }
+    }
+    glPopMatrix();
+
+    glDisable(GL_STENCIL_TEST);
+
+
+    glPopMatrix();
+
+    textureBlack.unbind();
+
 
     // Move train around track
     trainPosition += trainSpeed;
