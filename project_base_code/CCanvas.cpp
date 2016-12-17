@@ -747,6 +747,31 @@ void CCanvas::paintGL()
 
         textureTrain.bind();
         piece->draw();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
         textureTrain.unbind();
 
         // Draw penguins
@@ -849,6 +874,30 @@ void CCanvas::paintGL()
 
         piece->draw();
 
+        glPushMatrix();
+        glTranslated(1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
         glPopMatrix();
         currentPosition += piece->len;
         while (currentPosition >= trackLength){
@@ -902,6 +951,30 @@ void CCanvas::paintGL()
         glScaled(1.1, 1.1, 1.1);
 
         piece->draw();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 20, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
 
         glPopMatrix();
         currentPosition += piece->len;
