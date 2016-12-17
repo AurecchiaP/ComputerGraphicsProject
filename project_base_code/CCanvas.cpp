@@ -918,7 +918,7 @@ void CCanvas::paintGL()
     ground[0] = 0.0f;
     ground[1] = 0.0f;
     ground[2] = 1.0f;
-    ground[3] = -0.25f;
+    ground[3] = -0.3f;
 
     shadowMatrix(ground, lightpos);
 
