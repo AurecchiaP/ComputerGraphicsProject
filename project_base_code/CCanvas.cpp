@@ -185,9 +185,9 @@ static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](dou
 
 //-----------------------------------------------------------------------------
 // Train types
-static TrainPieceType locomotive("models/train.obj", 5.0);
+static TrainPieceType locomotive("models/train_no_wheels.obj", 5.0);
 
-static TrainPieceType wagon("models/wagon_short.obj", 5.57);
+static TrainPieceType wagon("models/wagon_short_no_wheels.obj", 5.57);
 
 //-----------------------------------------------------------------------------
 
@@ -245,6 +245,7 @@ void CCanvas::initializeGL()
     //Initialize train models
     locomotive.init();
     wagon.init();
+    wheel.init();
 
     // initialise floor
     floor.init();
@@ -746,6 +747,31 @@ void CCanvas::paintGL()
 
         textureTrain.bind();
         piece->draw();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 30, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, 1.25);
+        glRotated(trainPosition/trackLength * 360 * 30, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 30, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, -1.25);
+        glRotated(trainPosition/trackLength * 360 * 30, 1, 0, 0);
+        wheel.draw();
+        glPopMatrix();
+
         textureTrain.unbind();
 
         // Draw penguins
@@ -848,6 +874,26 @@ void CCanvas::paintGL()
 
         piece->draw();
 
+        glPushMatrix();
+        glTranslated(1.25, 0.75, 1.25);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, 1.25);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, -1.25);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, -1.25);
+        wheel.draw();
+        glPopMatrix();
+
         glPopMatrix();
         currentPosition += piece->len;
         while (currentPosition >= trackLength){
@@ -901,6 +947,26 @@ void CCanvas::paintGL()
         glScaled(1.1, 1.1, 1.1);
 
         piece->draw();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, 1.25);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, 1.25);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(1.25, 0.75, -1.25);
+        wheel.draw();
+        glPopMatrix();
+
+        glPushMatrix();
+        glTranslated(-1.25, 0.75, -1.25);
+        wheel.draw();
+        glPopMatrix();
 
         glPopMatrix();
         currentPosition += piece->len;

@@ -42,6 +42,7 @@ public:
         floor("models/floor.obj"),
         teddy("models/bear.obj"),
         penguin("models/penguin.obj"),
+        wheel("models/wheel.obj"),
         track(),
         train()
     {
@@ -100,6 +101,7 @@ private:
     ObjModel floor;
     ObjModel teddy;
     ObjModel penguin;
+    ObjModel wheel;
 
     std::vector<TrackPieceType *> track;
     std::vector<TrainPieceType *> train;
