@@ -185,7 +185,7 @@ static TrackPieceType right60(13.049002235133003, "models/curved-60.obj", [](dou
 
 //-----------------------------------------------------------------------------
 // Train types
-static TrainPieceType locomotive("models/train.obj", 5.0);
+static TrainPieceType locomotive("models/train_no_wheels.obj", 5.0);
 
 static TrainPieceType wagon("models/wagon_short.obj", 5.57);
 
@@ -245,6 +245,7 @@ void CCanvas::initializeGL()
     //Initialize train models
     locomotive.init();
     wagon.init();
+    wheel.init();
 
     // initialise floor
     floor.init();
