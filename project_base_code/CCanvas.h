@@ -31,11 +31,16 @@ public:
     explicit CCanvas(QWidget *parent = 0) : QGLWidget(parent),
         textureTracks("textures/wood.jpg"),
         textureTrain("textures/woodTrain.jpg"),
-        textureFloor("textures/carpet2.jpg"),
-        textureFloorboards("textures/floor.jpg"),
+        textureFloor("textures/darkCarpet.jpg"),
+        textureFloorboards("textures/floor2.jpg"),
         textureWalls("textures/wallpaper.jpg"),
         textureCeil("textures/ceiling.jpg"),
+        texbaseboard("textures/baseboard.png"),
+        texturePenguin("textures/penguin.jpg"),
+        textureTeddy("textures/bear2.jpg"),
         floor("models/floor.obj"),
+        teddy("models/bear.obj"),
+        penguin("models/penguin.obj"),
         track(),
         train()
     {
@@ -73,7 +78,8 @@ private:
 
     enum View {
         Perspective = 0,    // View the scene from a perspective (from above, from a side, or whatever)
-        Cockpit             // View the scene from the train cockpit (if you want, or whatever other view)
+        Cockpit,             // View the scene from the train cockpit (if you want, or whatever other view)
+        Teddy
     };
 
     void setView(View _view);
@@ -81,36 +87,43 @@ private:
     // Models and textures
     Texture textureTracks;
     Texture textureTrain;
-    // Model loaded from .obj format
     Texture textureFloor;
     Texture textureFloorboards;
     Texture textureWalls;
     Texture textureCeil;
+    Texture texbaseboard;
+    Texture texturePenguin;
+    Texture textureTeddy;
+
     ObjModel floor;
-    // Model loaded from .ply format
-//    PlyModel modelTrain2;
+    ObjModel teddy;
+    ObjModel penguin;
 
     std::vector<TrackPieceType *> track;
     std::vector<TrainPieceType *> train;
 
+    QPoint pos;
+
+    enum View currentView = Perspective;
+
+    size_t currentWagon = 0;
     //position of last wagon on track
     double trainPosition = 0;
     //total length of the track
     double trackLength = 0;
+
+    double trainSpeed = 0.2;
+
     //move coordinates
-    GLdouble x_rotate = -30;
-    GLdouble y_rotate = 0;
-    QPoint pos;
-    //key press events
     GLdouble x_translate = 5.5;
     GLdouble y_translate = 7.5;
     GLdouble z_translate = -15;
+    GLdouble x_rotate = -30;
+    GLdouble y_rotate = 0;
     GLdouble cx_rotate = 90;
     GLdouble cy_rotate = 0;
-    double trainSpeed = 0.2;
-    size_t currentWagon = 0;
-
-    enum View currentView = Perspective;
+    GLdouble tx_rotate = -60;
+    GLdouble tz_rotate = 180;
 
 
 };
