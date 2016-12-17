@@ -38,6 +38,7 @@ public:
         texbaseboard("textures/baseboard.png"),
         texturePenguin("textures/penguin.jpg"),
         textureTeddy("textures/bear2.jpg"),
+        textureBlack("textures/black.jpg"),
         floor("models/floor.obj"),
         teddy("models/bear.obj"),
         penguin("models/penguin.obj"),
@@ -94,6 +95,7 @@ private:
     Texture texbaseboard;
     Texture texturePenguin;
     Texture textureTeddy;
+    Texture textureBlack;
 
     ObjModel floor;
     ObjModel teddy;
