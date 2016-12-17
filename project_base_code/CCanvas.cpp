@@ -642,32 +642,32 @@ void CCanvas::paintGL()
         // baseboard
             texbaseboard.bind();
             glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(-29.0f, 19.0f, -0.2f ); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(19.0f, 19.0f, -0.2f ); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(19.0f, 19.0f, 2.2f ); // top right
-              glTexCoord2f(4, 5);    glVertex3f(-29.0f, 19.0f, 2.2f); // top left
+              glTexCoord2f(4, 4);    glVertex3f(-29.9f, 19.9f, -0.2f ); // bottom left
+              glTexCoord2f(5, 4);    glVertex3f(19.9f, 19.9f, -0.2f ); // bottom right
+              glTexCoord2f(5, 5);    glVertex3f(19.9f, 19.9f, 2.2f ); // top right
+              glTexCoord2f(4, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top left
             glEnd();
 
             glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(-29.0f, -10.0f, -0.2f); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(-29.0f, 19.0f, -0.2f); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(-29.0f, 19.0f, 2.2f); // top right
-              glTexCoord2f(4, 5);    glVertex3f(-29.0f, -10.0f, 2.2f); // top left
+              glTexCoord2f(4, 4);    glVertex3f(-29.9f, -10.0f, -0.2f); // bottom left
+              glTexCoord2f(5, 4);    glVertex3f(-29.9f, 19.9f, -0.2f); // bottom right
+              glTexCoord2f(5, 5);    glVertex3f(-29.9f, 19.9f, 2.2f); // top right
+              glTexCoord2f(4, 5);    glVertex3f(-29.9f, -10.0f, 2.2f); // top left
 
             glEnd();
 
             glBegin(GL_QUADS);
-              glTexCoord2f(4, 4);    glVertex3f(19.0f, 19.0f, -0.2f); // bottom left
-              glTexCoord2f(5, 4);    glVertex3f(19.0f, -10.0f, -0.2f ); // bottom right
-              glTexCoord2f(5, 5);    glVertex3f(19.0f, -10.0f, 2.2f); // top right
-              glTexCoord2f(4, 5);    glVertex3f(19.0f, 19.0f, 2.2f); // top left
+              glTexCoord2f(4, 4);    glVertex3f(19.9f, 19.9f, -0.2f); // bottom left
+              glTexCoord2f(5, 4);    glVertex3f(19.9f, -10.9f, -0.2f ); // bottom right
+              glTexCoord2f(5, 5);    glVertex3f(19.9f, -10.9f, 2.2f); // top right
+              glTexCoord2f(4, 5);    glVertex3f(19.9f, 19.9f, 2.2f); // top left
 
             glEnd();
             glBegin(GL_QUADS);
-                glTexCoord2f(4, 4);    glVertex3f(-29.0f, -9.0f, -0.2f); // bottom left
-                glTexCoord2f(5, 4);    glVertex3f(19.0f, -9.0f, -0.2f ); // bottom right
-                glTexCoord2f(5, 5);    glVertex3f(19.0f, -9.0f, 2.2f); // top right
-                glTexCoord2f(4, 5);    glVertex3f(-29.0f, -9.0f, 2.2f); // top left
+                glTexCoord2f(4, 4);    glVertex3f(-29.9f, -9.9f, -0.2f); // bottom left
+                glTexCoord2f(5, 4);    glVertex3f(19.9f, -9.9f, -0.2f ); // bottom right
+                glTexCoord2f(5, 5);    glVertex3f(19.9f, -9.9f, 2.2f); // top right
+                glTexCoord2f(4, 5);    glVertex3f(-29.9f, -9.9f, 2.2f); // top left
             glEnd();
             texbaseboard.unbind();
 
