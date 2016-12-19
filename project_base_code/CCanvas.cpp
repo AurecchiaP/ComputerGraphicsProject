@@ -83,11 +83,11 @@ void CCanvas::keyPressEvent( QKeyEvent * event ){
         y_translate -= CAMERA_SPEED * sin (-y_rotate * PI / 180);
         x_translate -= CAMERA_SPEED * cos (-y_rotate * PI / 180);
     } else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
-        y_translate += CAMERA_SPEED * cos (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
-        x_translate -= CAMERA_SPEED * sin (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
+        y_translate += CAMERA_SPEED * cos (-y_rotate * PI / 180);
+        x_translate -= CAMERA_SPEED * sin (-y_rotate * PI / 180);
     } else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
-        y_translate -= CAMERA_SPEED * cos (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
-        x_translate += CAMERA_SPEED * sin (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
+        y_translate -= CAMERA_SPEED * cos (-y_rotate * PI / 180);
+        x_translate += CAMERA_SPEED * sin (-y_rotate * PI / 180);
     } else if (event->key() == Qt::Key_Q){
         z_translate += CAMERA_SPEED;
     } else if (event->key() == Qt::Key_E){
