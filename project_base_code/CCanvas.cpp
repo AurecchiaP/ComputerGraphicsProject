@@ -5,6 +5,7 @@
 #include "TrainPieceType.h"
 
 #define MOUSE_SPEED 0.15
+#define CAMERA_SPEED 0.3
 
 using namespace std;
 
@@ -76,17 +77,21 @@ void CCanvas::mousePressEvent(QMouseEvent *event){
 
 void CCanvas::keyPressEvent( QKeyEvent * event ){
     if (event->key() == Qt::Key_A || event->key() == Qt::Key_Left){
-        x_translate += 0.5;
+        y_translate += CAMERA_SPEED * sin (-y_rotate * PI / 180);
+        x_translate += CAMERA_SPEED * cos (-y_rotate * PI / 180);
     } else if (event->key() == Qt::Key_D || event->key() == Qt::Key_Right){
-        x_translate -= 0.5;
+        y_translate -= CAMERA_SPEED * sin (-y_rotate * PI / 180);
+        x_translate -= CAMERA_SPEED * cos (-y_rotate * PI / 180);
     } else if (event->key() == Qt::Key_S || event->key() == Qt::Key_Down){
-        y_translate += 0.5;
+        y_translate += CAMERA_SPEED * cos (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
+        x_translate -= CAMERA_SPEED * sin (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
     } else if (event->key() == Qt::Key_W || event->key() == Qt::Key_Up){
-        y_translate -= 0.5;
+        y_translate -= CAMERA_SPEED * cos (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
+        x_translate += CAMERA_SPEED * sin (-y_rotate * PI / 180) * cos (-x_rotate * PI / 180);
     } else if (event->key() == Qt::Key_Q){
-        z_translate += 0.5;
+        z_translate += CAMERA_SPEED;
     } else if (event->key() == Qt::Key_E){
-        z_translate -= 0.5;
+        z_translate -= CAMERA_SPEED;
     } else if (event->key() == Qt::Key_K){
         trainSpeed += 0.1;
     } else if (event->key() == Qt::Key_L){
